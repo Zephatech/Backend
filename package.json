@@ -2,11 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "UWTrade Backend",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "migrate": "knex migrate:latest",
     "rollback": "knex migrate:rollback",
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "N/A"
   },
   "repository": {
