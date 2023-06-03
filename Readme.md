@@ -68,7 +68,7 @@ Update the `config/database.js` file with the database connection details.
 ```
 npm run migrate
 ```
-5. (Optional / Not avaliable) Seed the database with sample data:
+5. (Optional) Seed the database with sample data:
 ```
 npm run seed
 ```

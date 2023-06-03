@@ -13,7 +13,7 @@ const pool = new Pool({
   port: 5432,
   user: 'admin',  
   password: 'test',
-  database: 'api',
+  database: 'UWTRADEDB',
 })
 
 
