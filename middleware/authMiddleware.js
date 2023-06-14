@@ -1,13 +1,19 @@
+const jwt = require('jsonwebtoken');
+
 const authMiddleware = (req, res, next) => {
-  // Authentication logic
-  next();
+  const {token} = req.headers;
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, 'uwaterlootradesecret');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: 'Invalid token' });
+  }
 };
 
 module.exports = authMiddleware;
-
-
-
-// Add middle ware to routes
-// app.get('/profile', authMiddleware, (req, res) => {
-//   // Handle authenticated user profile request
-// });

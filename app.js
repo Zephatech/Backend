@@ -1,30 +1,26 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
+const authMiddleWare = require('./middleware/authMiddleware.js');
+const authRoutes = require('./routes/auth.js');
 
-// // Middleware
-// app.use(express.json()); // Parse JSON request bodies
-// app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// // Custom middleware
-// app.use((req, res, next) => {
-//   // Custom middleware logic
-//   next();
-// });
+// Routes
+app.use('/auth', authRoutes);
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+app.get('/profile', authMiddleWare, (req, res) => {
+  res.send('Profile Page');
+});
 
-// // Routes
-// const authRoutes = require('./routes/auth');
-// const marketplaceRoutes = require('./routes/marketplace');
-// const tradeRoutes = require('./routes/trade');
-
-// app.use('/auth', authRoutes);
-// app.use('/marketplace', marketplaceRoutes);
-// app.use('/trade', tradeRoutes);
-
-// // Error handling middleware
-// app.use((err, req, res, next) => {
-//   // Error handling logic
-//   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
-// });
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.log(err); // store error event to some lg file
+  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+});
 
 // Start the server
 const port = 3000;
