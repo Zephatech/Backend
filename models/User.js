@@ -8,10 +8,10 @@ class User {
     return result.rows[0] || null;
   }
 
-  static async create(name, email, password, token) {
-    const query = 'INSERT INTO users (name, email, password, token) VALUES ($1, $2, $3, $4)';
-    const values = [name, email, password, token];
-    await pool.query(query, values);
+  static async create(firstName, lastName, email, password, token, isVerified) {
+    const query = 'INSERT INTO users (firstName, lastName, email, password, token, isVerified) VALUES ($1, $2, $3, $4, $5, $6)';
+    const values = [firstName, lastName, email, password, token, isVerified];
+    await pool.query(query, values); 
   }
 
   static async verify(email) {

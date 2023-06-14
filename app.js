@@ -6,21 +6,21 @@ const authRoutes = require('./routes/auth.js');
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Routes
-app.use('/auth', authRoutes);
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-app.get('/profile', authMiddleWare, (req, res) => {
-  res.send('Profile Page');
-});
-
-// Error handling middleware
+// Error handling Middleware
 app.use((err, req, res, next) => {
   console.log(err); // store error event to some lg file
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 });
+
+// Routes
+app.use('/auth', authRoutes);
+app.get('/profile', authMiddleWare, (req, res) => {
+  res.send('Profile Page');
+});
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
 
 // Start the server
 const port = 3000;

@@ -1,17 +1,15 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { transporter } = require('../config/mail');
 const pool = require('../config/database');
 const User = require('../models/User');
 
 exports.register = async (req, res) => {
-  console.log(req.body);
   const { firstName, lastName, email, password } = req.body;
   
   try {
     // Check if user already exists
-    const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (userExists.rows.length > 0) {
+    const userExists = await User.findByEmail(email);
+    if (userExists) {
       return res.status(400).json({ message: 'The email is registered' });
     }
 
@@ -20,21 +18,10 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Generate email verification token
-    const token = jwt.sign({ email }, 'secret');
-
-    // send verification email (TODO)
-    // transporter.sendMail
+    const token = jwt.sign({ email }, 'uwaterlootradesecret');
 
     // Store user in the database
-    await pool.query('INSERT INTO users (firstName, lastName, email, password, token, isVerified) VALUES ($1, $2, $3, $4, $5, $6)', [
-      firstName,
-      lastName,
-      email,
-      hashedPassword,
-      token,
-      false,
-    ]);
-    console.log(firstName, lastName, email, hashedPassword, token);
+    await User.create(firstName, lastName, email, hashedPassword, token, false);
 
     res.status(200).json({ message: 'Registration successful. Please check your email for verification.' });
   } catch (error) {
@@ -72,6 +59,6 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  // Perform any logout actions, such as clearing tokens or cookies
+  res.clearCookie('token');
   res.status(200).json({ message: 'Logout successful' });
 }
