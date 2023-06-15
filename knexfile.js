@@ -9,7 +9,7 @@ module.exports = {
     connection: {
       host: 'localhost',
       port: '5432',
-      database: 'UWTRADEDB',
+      database: 'zephatech',
       user: 'admin',  
       password: 'test',
     },

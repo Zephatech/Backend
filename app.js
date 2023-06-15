@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 
 // // Middleware
@@ -25,6 +25,14 @@ const app = express();
 //   // Error handling logic
 //   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 // });
+
+// testing purposes
+app.get("/", (req, res) => {
+  res.send("hello world");
+});
+
+const productRouter = require("./routes/product");
+app.use("/users", productRouter);
 
 // Start the server
 const port = 3000;
