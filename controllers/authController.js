@@ -5,7 +5,7 @@ const User = require('../models/User');
 
 exports.register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-  
+  console.log(req.body);
   try {
     // Check if user already exists
     const userExists = await User.findByEmail(email);
@@ -23,6 +23,9 @@ exports.register = async (req, res) => {
     // Store user in the database
     await User.create(firstName, lastName, email, hashedPassword, token, false);
 
+    res.cookie('jwt', token, {
+      httpOnly: true, 
+    })
     res.status(200).json({ message: 'Registration successful. Please check your email for verification.' });
   } catch (error) {
     console.log(error);
@@ -50,8 +53,10 @@ exports.login = async (req, res) => {
     const expiresIn = '7d'; // Token expier in a week
     const secretKey = 'uwaterlootradesecret'; 
     const token = jwt.sign({ email }, secretKey, { expiresIn });
-
-    res.status(200).json({ message: 'Login successful', token });
+    res.cookie('jwt', token, {
+      httpOnly: true, 
+    })
+    res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -59,6 +64,8 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie('token');
+  res.cookie('jwt', "", {
+    httpOnly: true, 
+  });  
   res.status(200).json({ message: 'Logout successful' });
 }
