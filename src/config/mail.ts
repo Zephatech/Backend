@@ -1,14 +1,13 @@
-const nodemailer = require('nodemailer');
+import nodemailer, { Transporter } from 'nodemailer';
 
 // TODO: Add your email account credentials
-exports.transporter = nodemailer.createTransport({
+export const transporter: Transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'email',
     pass: 'email password'
   }
 });
-
 // Mail Option Template
 // const mailOptions = {
 //   from: 'your-email@gmail.com',

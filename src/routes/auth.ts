@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const authController = require('../controllers/authController.js');
+import express, { Router, Request, Response } from 'express';
+import {register, login, logout} from '../controllers/authController';
 
-router.get('/register', (req, res) => {
-  const registrationForm = `
+const router: Router = express.Router();
+
+router.get('/register', (req: Request, res: Response) => {
+  const registrationForm: string = `
     <h1>Registration Form</h1>
     <form action="/auth/register" method="POST">
       <label for="firstName">First Name:</label>
@@ -24,10 +25,11 @@ router.get('/register', (req, res) => {
   console.log('register');
   res.send(registrationForm);
 });
-router.post('/register', authController.register);
 
-router.get('/login', (req, res) => {
-  const loginForm = `
+router.post('/register', register);
+
+router.get('/login', (req: Request, res: Response) => {
+  const loginForm: string = `
     <h1>Login Form</h1>
     <form action="/auth/login" method="POST">
       <label for="email">Email:</label>
@@ -39,6 +41,8 @@ router.get('/login', (req, res) => {
   `;
   res.send(loginForm);
 });
-router.post('/login', authController.login);
-router.get('/logout', authController.logout);
-module.exports = router;
+
+router.post('/login', login);
+router.get('/logout', logout);
+
+export default router;
