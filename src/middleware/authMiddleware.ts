@@ -15,6 +15,7 @@ const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunc
   try {
     const decoded: any = jwt.verify(token, 'uwaterlootradesecret');
     req.user = decoded;
+    console.log(decoded);
     next();
   } catch (error) {
     console.log(error);
