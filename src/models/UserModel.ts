@@ -21,10 +21,9 @@ class UserModel {
   }
 
   static async verify(email) {
-    const userRepository = myDataSource.getRepository(User)
-    const user = await userRepository.findOneBy({ email: email })
+    const user = await this.userRepository.findOneBy({ email: email })
     user.verified = true;
-    await userRepository.save(user)
+    await this.userRepository.save(user)
   }
 }
 

@@ -30,11 +30,25 @@ class ProductModel {
 
   static async update(id, name, price, description, category, image) {
     const product = await this.productRepository.findOneBy({ id: id })
-    product.name = name;
-    product.price = price;
-    product.description = description;
-    product.category = category;
-    product.image = image;
+    if (name) {
+      product.name = name;
+    }
+
+    if (price) {
+      product.price = price;
+    }
+
+    if (description) {
+      product.description = description;
+    }
+
+    if (category) {
+      product.category = category;
+    }
+
+    if (image) {
+      product.image = image;
+    }
 
     await this.productRepository.save(product)
   }
