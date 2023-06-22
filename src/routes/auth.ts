@@ -26,8 +26,6 @@ router.get('/register', (req: Request, res: Response) => {
   res.send(registrationForm);
 });
 
-router.post('/register', register);
-
 router.get('/login', (req: Request, res: Response) => {
   const loginForm: string = `
     <h1>Login Form</h1>
@@ -42,6 +40,7 @@ router.get('/login', (req: Request, res: Response) => {
   res.send(loginForm);
 });
 
+router.post('/register', register);
 router.post('/login', login);
 router.get('/logout', logout);
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../models/User';
+import User from '../models/UserModel';
 
 export const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
@@ -52,7 +52,8 @@ export const login = async (req: Request, res: Response) => {
     // Generate JWT with expiration time
     const expiresIn = '7d'; // Token expires in a week
     const secretKey = 'uwaterlootradesecret';
-    const token = jwt.sign({ email }, secretKey, { expiresIn });
+    const userId = user.id;
+    const token = jwt.sign({ email, userId }, secretKey, { expiresIn });
     res.cookie('jwt', token, {
       httpOnly: true,
     });

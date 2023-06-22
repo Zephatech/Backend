@@ -5,7 +5,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authMiddleware from './middleware/authMiddleware';
 import authRoutes from './routes/auth';
-import { User } from "./entity/User";
 import myDataSource from "./config/dataSource";
 
 const app = express();
@@ -39,17 +38,15 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 // Routes
 app.use('/auth', authRoutes);
+// app.use('')
+
+// Temporary routes
 app.get('/profile', authMiddleware, (req: Request, res: Response) => {
   res.json({ message: 'Profile Page' });
 });
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello World!' });
 });
-
-app.get("/users", async function (req: Request, res: Response) {
-  const users = await myDataSource.getRepository(User).find()
-  res.json(users)
-})
 
 // Start the server
 const port = 3001;
