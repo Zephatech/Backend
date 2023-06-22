@@ -1,9 +1,9 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const pool = require('../config/database');
-const User = require('../models/User');
+import { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/User';
 
-exports.register = async (req, res) => {
+export const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
   console.log(req.body);
   try {
@@ -24,8 +24,8 @@ exports.register = async (req, res) => {
     await User.create(firstName, lastName, email, hashedPassword, token, false);
 
     res.cookie('jwt', token, {
-      httpOnly: true, 
-    })
+      httpOnly: true,
+    });
     res.status(200).json({ message: 'Registration successful. Please check your email for verification.' });
   } catch (error) {
     console.log(error);
@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -50,12 +50,12 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT with expiration time
-    const expiresIn = '7d'; // Token expier in a week
-    const secretKey = 'uwaterlootradesecret'; 
+    const expiresIn = '7d'; // Token expires in a week
+    const secretKey = 'uwaterlootradesecret';
     const token = jwt.sign({ email }, secretKey, { expiresIn });
     res.cookie('jwt', token, {
-      httpOnly: true, 
-    })
+      httpOnly: true,
+    });
     res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     console.log(error);
@@ -63,9 +63,9 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.logout = (req, res) => {
-  res.cookie('jwt', "", {
-    httpOnly: true, 
-  });  
+export const logout = (req: Request, res: Response) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+  });
   res.status(200).json({ message: 'Logout successful' });
-}
+};
