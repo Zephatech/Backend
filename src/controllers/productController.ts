@@ -44,6 +44,7 @@ export const getProductsByUserId = async (req: Request, res: Response) => {
 export const createProduct = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const ownerId = req.user.userId;
+    console.log(req.body)
     const { name, price, description, category, image } = req.body;
     const product = await Product.create(ownerId, name, price, description, category, image);
     res.status(200).json(product);
@@ -67,7 +68,7 @@ export const updateProduct = async (req: AuthenticatedRequest, res: Response) =>
       return res.status(403).json({ message: 'Unauthorized to update this product' });
     }
     
-    const updatedProduct = await Product.update(productId, ownerId, name, price, description, category, image);
+    const updatedProduct = await Product.update(productId, name, price, description, category, image);
     res.status(200).json(updatedProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authMiddleware from './middleware/authMiddleware';
 import authRoutes from './routes/auth';
+import productRoutes from './routes/product';
 import myDataSource from "./config/dataSource";
 
 const app = express();
@@ -38,7 +39,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 // Routes
 app.use('/auth', authRoutes);
-// app.use('')
+app.use('/products', productRoutes);
 
 // Temporary routes
 app.get('/profile', authMiddleware, (req: Request, res: Response) => {
