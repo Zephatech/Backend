@@ -1,131 +1,123 @@
-// import { Request, Response } from 'express';
-// import { Trade } from '../models/Trade';
-// import { User } from '../models/User';
-// import { Product } from '../models/Product';
+import { Request, Response } from 'express';
+import User from '../models/UserModel';
+import Product from '../models/ProductModel';
+import Trade from '../models/TradeModel';
+import myDataSource from '../config/dataSource';
+import { AuthenticatedRequest } from '../types/authenticatedRequest';
 
-// export const createTrade = async (req: Request, res: Response) => {
-//   try {
-//     const buyerId = req.user.userId;
-//     const { productId } = req.body;
+export const createTrade = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const buyerId = req.user.userId;
+    const { productId } = req.body;
 
-//     const buyer = await User.findOne(buyerId);
-//     const product = await Product.findOne(productId);
+    const buyer = await User.findById(buyerId);
+    const product = await Product.findById(productId);
 
-//     if (!buyer || !product) {
-//       return res.status(404).json({ message: 'User or product not found' });
-//     }
+    if (!buyer || !product) {
+      return res.status(404).json({ message: 'User or product not found' });
+    }
 
-//     if (product.locked) {
-//       return res.status(400).json({ message: 'Product is already locked for a trade' });
-//     }
+    if (product.locked) {
+      return res.status(400).json({ message: 'Product is already locked for a trade' });
+    }
 
-//     const owner = await User.findOne(product.ownerId);
-//     const trade = new Trade();
-//     trade.buyer = buyer;
-//     trade.seller = owner;
-//     trade.product = product;
+    const owner = await User.findById(product.ownerId);
 
-//     await trade.save();
-
-//     product.locked = true;
-//     product.lockedAt = new Date();
-//     await product.save();
-
-//     res.status(200).json(trade);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    const trade = Trade.create(buyer, owner, product);
+    res.status(200).json(trade);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
-// // 确认交易
-// export const confirmTrade = async (req: Request, res: Response) => {
-//   try {
-//     const tradeId = req.params.tradeId;
-//     const sellerId = req.user.userId;
+export const confirmTrade = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tradeId = req.params.tradeId;
+    const sellerId = req.user.userId;
 
-//     const trade = await Trade.findOne(tradeId, {
-//       where: { seller: sellerId },
-//       relations: ['product']
-//     });
+    const trade = await Trade.findById(tradeId);
+    if (!trade) {
+      return res.status(404).json({ message: 'Trade not found' });
+    } else if (trade.confirmed) {
+      return res.status(400).json({ message: 'Trade is already confirmed' });
+    }
 
-//     if (!trade) {
-//       return res.status(404).json({ message: 'Trade not found' });
-//     }
+    const product = await Product.findById(trade.product.id);
 
-//     if (trade.confirmed) {
-//       return res.status(400).json({ message: 'Trade is already confirmed' });
-//     }
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
 
-//     trade.confirmed = true;
-//     trade.confirmedAt = new Date();
-//     await trade.save();
+    trade.confirmed = true;
+    trade.confirmedAt = new Date();
+    product.locked = true;
+    product.lockedAt = new Date();
 
-//     res.status(200).json(trade);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    await myDataSource.manager.transaction(async transactionalEntityManager => {
+      await transactionalEntityManager.save(trade);
+      await transactionalEntityManager.save(product);
+    });
 
-// // 取消交易
-// export const cancelTrade = async (req: Request, res: Response) => {
-//   try {
-//     const tradeId = req.params.tradeId;
-//     const userId = req.user.userId;
+    res.status(200).json(trade);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//     const trade = await Trade.findOne(tradeId, {
-//       where: [{ buyer: userId }, { seller: userId }],
-//       relations: ['product']
-//     });
 
-//     if (!trade) {
-//       return res.status(404).json({ message: 'Trade not found' });
-//     }
+export const cancelTrade = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tradeId = req.params.tradeId;
 
-//     if (trade.confirmed) {
-//       return res.status(400).json({ message: 'Cannot cancel a confirmed trade' });
-//     }
+    const trade = await Trade.findById(tradeId)
 
-//     trade.canceledAt = new Date();
-//     await trade.save();
+    if (!trade) {
+      return res.status(404).json({ message: 'Trade not found' });
+    }
 
-//     // 解锁产品
-//     trade.product.locked = false;
-//     trade.product.lockedAt = null;
-//     await trade.product.save();
+    if (trade.confirmed) {
+      return res.status(400).json({ message: 'Cannot cancel a confirmed trade' });
+    }
 
-//     res.status(200).json(trade);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    trade.canceledAt = new Date();
+    trade.product.locked = false;
+    trade.product.lockedAt = null;
+    
+    await myDataSource.manager.transaction(async transactionalEntityManager => {
+      await transactionalEntityManager.save(trade);
+      await transactionalEntityManager.save(trade.product);
+    });
 
-// // 结束交易
-// export const endTrade = async (req: Request, res: Response) => {
-//   try {
-//     const tradeId = req.params.tradeId;
-//     const userId = req.user.userId;
+    res.status(200).json(trade);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//     const trade = await Trade.findOne(tradeId, {
-//       where: [{ buyer: userId }, { seller: userId }],
-//       relations: ['product']
-//     });
+export const endTrade = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tradeId = req.params.tradeId;
+    const userId = req.user.userId;
 
-//     if (!trade) {
-//       return res.status(404).json({ message: 'Trade not found' });
-//     }
+    const trade = await Trade.findById(tradeId);
 
-//     trade.endedAt = new Date();
-//     await trade.save();
+    if (!trade) {
+      return res.status(404).json({ message: 'Trade not found' });
+    }
 
-//     // 解锁产品
-//     trade.product.locked = false;
-//     trade.product.lockedAt = null;
-//     await trade.product.save();
+    trade.endedAt = new Date();
+    trade.product.locked = false;
+    trade.product.lockedAt = null;
 
-//     res.status(200).json(trade);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    await myDataSource.manager.transaction(async transactionalEntityManager => {
+      await transactionalEntityManager.save(trade);
+      await transactionalEntityManager.save(trade.product);
+    });
+
+    res.status(200).json(trade);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
