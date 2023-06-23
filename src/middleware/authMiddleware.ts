@@ -13,7 +13,7 @@ const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunc
   }
 
   try {
-    const decoded: any = jwt.verify(token, 'uwaterlootradesecret');
+    const decoded: { email: string, userId: number } = jwt.verify(token, 'uwaterlootradesecret');
     req.user = decoded;
     next();
   } catch (error) {
