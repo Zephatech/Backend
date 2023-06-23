@@ -1,8 +1,14 @@
 import express, { Router, Request, Response } from 'express';
 import {register, login, logout} from '../controllers/authController';
+import authMiddleware from '../middleware/authMiddleware';
+import { AuthenticatedRequest } from '../types/authenticatedRequest';
 
 const router: Router = express.Router();
+router.post('/register', register);
+router.post('/login', login);
+router.get('/logout', logout);
 
+// TODO: remove these routes
 router.get('/register', (req: Request, res: Response) => {
   const registrationForm: string = `
     <h1>Registration Form</h1>
@@ -40,8 +46,8 @@ router.get('/login', (req: Request, res: Response) => {
   res.send(loginForm);
 });
 
-router.post('/register', register);
-router.post('/login', login);
-router.get('/logout', logout);
+router.get('/getCurrentUserId', authMiddleware, (req: AuthenticatedRequest, res: Response) => {
+  res.status(200).json({ userId: req.user.userId });
+});
 
 export default router;

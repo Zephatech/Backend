@@ -3,14 +3,13 @@ import { Request, Response, NextFunction } from 'express';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import authMiddleware from './middleware/authMiddleware';
 import authRoutes from './routes/auth';
 import productRoutes from './routes/product';
+import tradeRoutes from "./routes/trade";
 import myDataSource from "./config/dataSource";
 
 const app = express();
 
-// establish connection to database
 // establish database connection
 myDataSource
     .initialize()
@@ -37,14 +36,13 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 });
 
+
 // Routes
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
+app.use('/trade', tradeRoutes)
 
 // Temporary routes
-app.get('/profile', authMiddleware, (req: Request, res: Response) => {
-  res.json({ message: 'Profile Page' });
-});
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello World!' });
 });
