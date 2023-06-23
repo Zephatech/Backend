@@ -1,14 +1,6 @@
 import { Request, Response } from 'express';
 import Product from '../models/ProductModel';
-
-interface User {
-  userId: number;
-  email: string;
-}
-
-interface AuthenticatedRequest extends Request {
-  user: User;
-}
+import { AuthenticatedRequest } from '../types/authenticatedRequest';
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {

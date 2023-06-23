@@ -4,6 +4,10 @@ import myDataSource from "../config/dataSource";
 class UserModel {
   private static userRepository = myDataSource.getRepository(User)
 
+  static async findById(id) {
+    return await this.userRepository.findOneBy({ id: id })
+  }
+  
   static async findByEmail(email) {
     return await this.userRepository.findOneBy({ email: email })
   }
