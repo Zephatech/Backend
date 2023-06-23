@@ -4,6 +4,10 @@ import myDataSource from "../config/dataSource";
 class UserModel {
   private static userRepository = myDataSource.getRepository(User)
 
+  static async findById(id) {
+    return await this.userRepository.findOneBy({ id: id })
+  }
+  
   static async findByEmail(email) {
     return await this.userRepository.findOneBy({ email: email })
   }
@@ -21,10 +25,9 @@ class UserModel {
   }
 
   static async verify(email) {
-    const userRepository = myDataSource.getRepository(User)
-    const user = await userRepository.findOneBy({ email: email })
+    const user = await this.userRepository.findOneBy({ email: email })
     user.verified = true;
-    await userRepository.save(user)
+    await this.userRepository.save(user)
   }
 }
 
