@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Product from '../models/ProductModel';
 import { AuthenticatedRequest } from '../types/authenticatedRequest';
+import { sensitiveTextChecker } from '../utils/sensitiveTextChecker';
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
@@ -36,8 +37,12 @@ export const getProductsByUserId = async (req: Request, res: Response) => {
 export const createProduct = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const ownerId = req.user.userId;
-    console.log(req.body)
     const { name, price, description, category, image } = req.body;
+    
+    if(sensitiveTextChecker(name) || sensitiveTextChecker(description)){
+      return res.status(400).json({ message: 'Product name or description contains sensitive text' });
+    }
+
     const product = await Product.create(ownerId, name, price, description, category, image);
     res.status(200).json(product);
   } catch (error) {
@@ -50,6 +55,10 @@ export const updateProduct = async (req: AuthenticatedRequest, res: Response) =>
     const productId = req.params.id;
     const ownerId = req.user.userId;
     const { name, price, description, category, image } = req.body;
+    
+    if(sensitiveTextChecker(name) || sensitiveTextChecker(description)){
+      return res.status(400).json({ message: 'Product name or description contains sensitive text' });
+    }
     
     const product = await Product.findById(productId);
     if (!product) {
