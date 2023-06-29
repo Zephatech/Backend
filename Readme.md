@@ -41,6 +41,8 @@ models/:
   Directory containing the application's models, which is responsible to implement the CRUD operations.
 routes/:
   Directory containing the application's routes, which provides API for the front-end application to call.
+utils/:
+  Directory containing all the shared util functions
 types:
   Directory containing the customized types.
 README.md:
