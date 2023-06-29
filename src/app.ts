@@ -7,6 +7,7 @@ import authRoutes from './routes/auth';
 import productRoutes from './routes/product';
 import tradeRoutes from "./routes/trade";
 import myDataSource from "./config/dataSource";
+import { sensitiveTextChecker } from "./utils/sensitiveTextChecker";
 
 const app = express();
 
