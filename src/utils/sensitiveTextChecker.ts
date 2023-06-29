@@ -1,6 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
+import { enable_AI_text_checker } from '../featureFlags';
 
-export const sensitiveTextChecker = async (content: String) => {
+export const isContentToxic = async (content: String) => {
+  if(enable_AI_text_checker == false){
+    return false
+  }
+
   const data = {
     text: `${content}`
   }

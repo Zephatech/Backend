@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Product from '../models/ProductModel';
 import { AuthenticatedRequest } from '../types/authenticatedRequest';
-import { sensitiveTextChecker } from '../utils/sensitiveTextChecker';
+import { isContentToxic } from '../utils/sensitiveTextChecker';
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
@@ -39,7 +39,7 @@ export const createProduct = async (req: AuthenticatedRequest, res: Response) =>
     const ownerId = req.user.userId;
     const { name, price, description, category, image } = req.body;
     
-    if(sensitiveTextChecker(name) || sensitiveTextChecker(description)){
+    if(isContentToxic (name) || isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
     }
 
@@ -56,10 +56,10 @@ export const updateProduct = async (req: AuthenticatedRequest, res: Response) =>
     const ownerId = req.user.userId;
     const { name, price, description, category, image } = req.body;
     
-    if(sensitiveTextChecker(name) || sensitiveTextChecker(description)){
+    if(isContentToxic (name) || isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
     }
-    
+
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
