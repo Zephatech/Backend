@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import Product from '../models/ProductModel';
-import { AuthenticatedRequest } from '../types/authenticatedRequest';
+import { AuthenticatedRequest, PostItemRequest } from '../types/authenticatedRequest';
 import { isContentToxic } from '../utils/sensitiveTextChecker';
+
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
@@ -34,15 +35,15 @@ export const getProductsByUserId = async (req: Request, res: Response) => {
   }
 }
 
-export const createProduct = async (req: AuthenticatedRequest, res: Response) => {
+export const createProduct = async (req: PostItemRequest, res: Response) => {
   try {
-    const ownerId = req.user.userId;
-    const { name, price, description, category, image } = req.body;
-    
-    if(isContentToxic (name) || isContentToxic (description)){
+    const ownerId = req.user.userId;    
+  
+    const { name, price, description, category } = req.body;
+    if(await isContentToxic (name) || await isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
     }
-
+    const image = req.file ? req.uuid : ""
     const product = await Product.create(ownerId, name, price, description, category, image);
     res.status(200).json(product);
   } catch (error) {
@@ -56,7 +57,7 @@ export const updateProduct = async (req: AuthenticatedRequest, res: Response) =>
     const ownerId = req.user.userId;
     const { name, price, description, category, image } = req.body;
     
-    if(isContentToxic (name) || isContentToxic (description)){
+    if(await isContentToxic (name) || await isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
     }
 
