@@ -40,7 +40,7 @@ export const createProduct = async (req: PostItemRequest, res: Response) => {
     const ownerId = req.user.userId;    
   
     const { name, price, description, category } = req.body;
-    if(isContentToxic (name) || isContentToxic (description)){
+    if(await isContentToxic (name) || await isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
     }
     const image = req.file ? req.uuid : ""
@@ -57,7 +57,7 @@ export const updateProduct = async (req: AuthenticatedRequest, res: Response) =>
     const ownerId = req.user.userId;
     const { name, price, description, category, image } = req.body;
     
-    if(isContentToxic (name) || isContentToxic (description)){
+    if(await isContentToxic (name) || await isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
     }
 
