@@ -1,10 +1,12 @@
 import express, { Router, Request, Response } from 'express';
-import {register, login, logout} from '../controllers/authController';
+import {register, verifyEmail, resendVerificationCode , login, logout} from '../controllers/authController';
 import authMiddleware from '../middleware/authMiddleware';
 import { AuthenticatedRequest } from '../types/authenticatedRequest';
 
 const router: Router = express.Router();
 router.post('/register', register);
+router.post('/verifyEmail', verifyEmail)
+router.post('/resendVerificationCode', resendVerificationCode)
 router.post('/login', login);
 router.get('/logout', logout);
 
@@ -30,6 +32,20 @@ router.get('/register', (req: Request, res: Response) => {
   `;
   console.log('register');
   res.send(registrationForm);
+});
+
+router.get('/verifyEmail', (req: Request, res: Response) => {
+  const verifyEmailForm: string = `
+    <h1>Verify Email Form</h1>
+    <form action="/auth/verifyEmail" method="POST">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required><br><br>
+      <label for="verificationCode">Verification Code:</label>
+      <input type="text" id="verificationCode" name="verificationCode" required><br><br>
+      <input type="submit" value="Verify">
+    </form>
+  `;
+  res.send(verifyEmailForm);
 });
 
 router.get('/login', (req: Request, res: Response) => {

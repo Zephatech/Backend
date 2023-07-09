@@ -7,18 +7,19 @@ import authRoutes from './routes/auth';
 import productRoutes from './routes/product';
 import tradeRoutes from "./routes/trade";
 import myDataSource from "./config/dataSource";
+import { transporter } from './config/mail';
 
 const app = express();
 
 // establish database connection
 myDataSource
-    .initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
-    })
+  .initialize()
+  .then(() => {
+    console.log("Data Source has been initialized!")
+  })
+  .catch((err) => {
+    console.error("Error during Data Source initialization:", err)
+  })
 
 // Middleware
 app.use(express.json());
@@ -46,6 +47,12 @@ app.use('/trade', tradeRoutes)
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello World!' });
 });
+
+app.get('/testMail', (req: Request, res: Response) => {
+  
+});
+
+
 
 // Start the server
 const port = 3001;

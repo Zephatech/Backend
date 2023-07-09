@@ -2,16 +2,72 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/UserModel';
+import { transporter } from '../config/mail';
+
+// Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit
+function isValidPassword(password) {
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[0-9a-zA-Z!@#$%^&*]{8,}$/;
+  return passwordRegex.test(password);
+}
+
+// Make sure the email is a valid UW email
+function isValidUWEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const domain = email.split('@')[1];
+  return emailRegex.test(email) && domain === 'uwaterloo.ca';
+};
+
+async function sendVerificationCodeToEmail(email, verificationCode) {
+  const mailOptions = {
+    from: '',
+    to: email,
+    subject: 'UWaterloo Trade Verification Code',
+    text: `Your verification code is ${verificationCode}`,
+  };
+
+  if (false) {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        throw error;
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  }
+}
+
+function generateVerificationCode() {
+  const length = 6;
+  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let code = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters[randomIndex];
+  }
+
+  return code;
+}
 
 export const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
-  console.log(req.body);
+  if (!isValidPassword(password)) {
+    return res.status(400).json({ message: 'Password does not meet the criteria' });
+  }
+  if (!isValidUWEmail(email)) {
+    return res.status(400).json({ message: 'Invalid email format' });
+  }
+
   try {
     // Check if user already exists
     const userExists = await User.findByEmail(email);
     if (userExists) {
       return res.status(400).json({ message: 'The email is registered' });
     }
+
+    // Generate verification code
+    const verificationCode = generateVerificationCode(); // Generate a random verification code
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
@@ -21,12 +77,63 @@ export const register = async (req: Request, res: Response) => {
     const token = jwt.sign({ email, }, 'uwaterlootradesecret');
 
     // Store user in the database
-    await User.create(firstName, lastName, email, hashedPassword, token, false);
+    await User.create(firstName, lastName, email, hashedPassword, false, verificationCode);
+    console.log(verificationCode)
+
+    await sendVerificationCodeToEmail(email, verificationCode); // Implement this function to send verification code to user's email
 
     res.cookie('jwt', token, {
       httpOnly: true,
     });
     res.status(200).json({ message: 'Registration successful. Please check your email for verification.' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const verifyEmail = async (req: Request, res: Response) => {
+  const { email, verificationCode } = req.body;
+
+  try {
+    // Find user by email
+    const user = await User.findByEmail(email);
+    if (user === null) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the verification code matches
+    if (user.verificationCode !== verificationCode) {
+      return res.status(400).json({ message: 'Invalid verification code' });
+    }
+
+    // Mark user's email as verified
+    await User.markEmailAsVerified(email);
+
+    res.status(200).json({ message: 'Email verification successful' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const resendVerificationCode = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  try {
+    // Find user by email
+    const user = await User.findByEmail(email);
+    if (user === null) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate verification code
+    const verificationCode = generateVerificationCode(); // Generate a random verification code
+
+    // Update user's verification code
+    user.verificationCode = verificationCode;
+    await User.updateverificationCode(email, verificationCode);
+
+    sendVerificationCodeToEmail(email, verificationCode); // Implement this function to send verification code to user's email
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Internal server error' });
