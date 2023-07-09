@@ -12,14 +12,21 @@ class UserModel {
     return await this.userRepository.findOneBy({ email: email })
   }
 
-  static async create(firstName, lastName, email, password, token, isVerified) {
+  static async markEmailAsVerified(email) {
+    const user = await this.userRepository.findOneBy({ email: email })
+    user.verified = true;
+    user.verificationCode = null;
+    await this.userRepository.save(user)
+  }
+
+  static async create(firstName, lastName, email, password, isVerified, verificationCode) {
     const user = new User();
     user.firstName = firstName;
     user.lastName = lastName;
     user.email = email;
     user.password = password;
-    user.token = token;
     user.verified = isVerified;
+    user.verificationCode = verificationCode;
 
     await this.userRepository.save(user)
   }
@@ -27,6 +34,12 @@ class UserModel {
   static async verify(email) {
     const user = await this.userRepository.findOneBy({ email: email })
     user.verified = true;
+    await this.userRepository.save(user)
+  }
+
+  static async updateverificationCode(email, verificationCode) {
+    const user = await this.userRepository.findOneBy({ email: email })
+    user.verificationCode = verificationCode;
     await this.userRepository.save(user)
   }
 }
