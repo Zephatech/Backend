@@ -42,6 +42,12 @@ class UserModel {
     user.verificationCode = verificationCode;
     await this.userRepository.save(user)
   }
+
+  static async updatePassword(email, password) {
+    const user = await this.userRepository.findOneBy({ email: email })
+    user.password = password;
+    await this.userRepository.save(user)
+  }
 }
 
 export default UserModel;

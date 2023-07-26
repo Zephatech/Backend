@@ -20,10 +20,6 @@ export const createTrade = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: 'buyer or product not found' });
     }
 
-    if (product.locked) {
-      return res.status(400).json({ message: 'Product is already locked for a trade' });
-    }
-
     const owner: UserEntity = await User.findById(product.ownerId);
     if (!owner) {
       return res.status(404).json({ message: 'owner not found' });
@@ -36,16 +32,12 @@ export const createTrade = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-
-export const confirmTrade = async (req: AuthenticatedRequest, res: Response) => {
+export const acceptTrade = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const tradeId = req.params.tradeId;
     const sellerId = req.user.userId;
 
-  
     const trade: TradeEntity = await Trade.findById(tradeId);
-    console.log(trade.product.ownerId)
-    console.log(sellerId)
     if (!trade) {
       return res.status(404).json({ message: 'Trade not found' });
     } else if (trade.confirmed) {
@@ -53,13 +45,15 @@ export const confirmTrade = async (req: AuthenticatedRequest, res: Response) => 
     } if (trade.product.ownerId !== sellerId) {
       return res.status(403).json({ message: 'Unauthorized to confirm this trade' });
     }
-    console.log(trade.product.ownerId)
-    console.log(sellerId)
 
     const product = trade.product;
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
+    }
+
+    if (!trade.canceledAt != null) {
+      return res.status(400).json({ message: 'Cannot confirm a canceled trade' });
     }
 
     trade.confirmed = true;
@@ -78,7 +72,6 @@ export const confirmTrade = async (req: AuthenticatedRequest, res: Response) => 
   }
 };
 
-
 export const cancelTrade = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const tradeId = req.params.tradeId;
@@ -93,6 +86,8 @@ export const cancelTrade = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     trade.canceledAt = new Date();
+    trade.confirmed = false;
+    trade.confirmedAt = null;
     trade.product.locked = false;
     trade.product.lockedAt = null;
     
@@ -134,3 +129,24 @@ export const endTrade = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+export const getAllTradeRecord =async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user.userId;
+    const tradeRecordAsBuyer = await Trade.findByBuyerId(userId);
+    const tradeRecordAsSeller = await Trade.findBySellerId(userId);
+  
+    res.status(200).json({ buy: tradeRecordAsBuyer, sell: tradeRecordAsSeller });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export const getTradeById = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const tradeId = req.params.tradeId;
+    const trade = await Trade.findById(tradeId);
+    res.status(200).json(trade);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
