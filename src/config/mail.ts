@@ -2,26 +2,12 @@ import nodemailer, { Transporter } from 'nodemailer';
 
 // TODO: Add your email account credentials
 export const transporter: Transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp-relay.brevo.com',
+  port: 587,
   auth: {
-    user: 'email',
-    pass: 'email password'
+    user: 'zhubolin010118@gmail.com',
+    pass: 'PRjY2W1XcLTKZCMd'
   }
 });
-// Mail Option Template
-// const mailOptions = {
-//   from: 'your-email@gmail.com',
-//   to: 'recipient@example.com',
-//   subject: 'Test Email',
-//   text: 'Hello, this is a test email.'
-// };
 
-// Send email template
-// transporter.sendMail(mailOptions, function(error, info){
-//   if (error) {
-//     console.log(error);
-//   } else {
-//     console.log('Email sent: ' + info.response);
-//   }
-// });
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTrade, confirmTrade, cancelTrade, endTrade } from '../controllers/tradeController';
+import { createTrade, cancelTrade, endTrade, acceptTrade } from '../controllers/tradeController';
 import authMiddleware from '../middleware/authMiddleware';
 
 const tradeRouter = express.Router();
@@ -8,7 +8,7 @@ const tradeRouter = express.Router();
 tradeRouter.post('/', authMiddleware, createTrade);
 
 // Confirm a trade
-tradeRouter.put('/:tradeId/confirm', authMiddleware, confirmTrade);
+tradeRouter.put('/:tradeId/confirm', authMiddleware, acceptTrade);
 
 // Cancel a trade
 tradeRouter.put('/:tradeId/cancel', authMiddleware, cancelTrade);

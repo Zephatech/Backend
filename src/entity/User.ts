@@ -18,8 +18,8 @@ export class User {
     password: string
 
     @Column()
-    token: string
-
-    @Column()
     verified: boolean
+
+    @Column({ nullable: true })
+    verificationCode: string
 }
