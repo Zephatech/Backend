@@ -19,6 +19,16 @@ class UserModel {
 
     return await this.tradeRepository.save(trade)
   }
+
+  static async findByBuyerId(buyerId) {
+    const options = { buyerId: buyerId , relations: ['product'] }
+    return await this.tradeRepository.find(options)
+  }
+
+  static async findBySellerId(sellerId) {
+    const options = { sellerId: sellerId, relations: ['product'] }
+    return await this.tradeRepository.find(options)
+  }
 }
 
 export default UserModel;
