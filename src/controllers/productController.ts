@@ -88,7 +88,11 @@ export const updateProduct = async (req: AuthenticatedRequest, res: Response) =>
     if (product.ownerId !== ownerId) {
       return res.status(403).json({ message: 'Unauthorized to update this product' });
     }
-    
+
+    if (product.locked) {
+      return res.status(403).json({ message: 'Product is locked, there is a comfirmed trade for this product, please cancel if you want to change the product' });
+    }
+
     const updatedProduct = await Product.update(productId, name, price, description, category, image);
     res.status(200).json(updatedProduct);
   } catch (error) {
