@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from 'express';
-import {register, verifyEmail, resendVerificationCode , login, logout} from '../controllers/authController';
+import {register, verifyEmail, resendVerificationCode , login, logout, resetPassword} from '../controllers/authController';
 import authMiddleware from '../middleware/authMiddleware';
 import { AuthenticatedRequest } from '../types/authenticatedRequest';
 
@@ -7,10 +7,11 @@ const router: Router = express.Router();
 router.post('/register', register);
 router.post('/verifyEmail', verifyEmail)
 router.post('/resendVerificationCode', resendVerificationCode)
+router.post('/resetPassword', resetPassword)
 router.post('/login', login);
 router.get('/logout', logout);
 
-// TODO: remove these routes
+// TODO: remove these routes (After building up testing)
 router.get('/register', (req: Request, res: Response) => {
   const registrationForm: string = `
     <h1>Registration Form</h1>
