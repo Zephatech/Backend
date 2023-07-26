@@ -19,7 +19,7 @@ function isValidUWEmail(email) {
 
 async function sendVerificationCodeToEmail(email, verificationCode) {
   const mailOptions = {
-    from: 'email-no-reply@uwtrade.com', // Add your sender email address here
+    from: 'no-reply@uwtrade.com', // Add your sender email address here
     to: email,
     subject: 'UWaterloo Trade Verification Code',
     html: `
