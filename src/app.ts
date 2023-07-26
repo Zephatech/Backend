@@ -7,7 +7,6 @@ import authRoutes from './routes/auth';
 import productRoutes from './routes/product';
 import tradeRoutes from "./routes/trade";
 import myDataSource from "./config/dataSource";
-import { transporter } from './config/mail';
 
 const app = express();
 
@@ -42,17 +41,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/trade', tradeRoutes)
-
-// Temporary routes
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Hello World!' });
-});
-
-app.get('/testMail', (req: Request, res: Response) => {
-  
-});
-
-
 
 // Start the server
 const port = 3001;
