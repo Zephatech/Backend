@@ -3,11 +3,30 @@ import Product from '../models/ProductModel';
 import { AuthenticatedRequest, PostItemRequest } from '../types/authenticatedRequest';
 import { isContentToxic } from '../utils/sensitiveTextChecker';
 
-
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
     const products = await Product.findAll();
     res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export const getProductsBySearchTerm = async (req: Request, res: Response) => {
+  try {
+    const searchTerm = req.params.searchTerm;
+    const products = await Product.findAll();
+
+    if(searchTerm === "") {
+      return res.status(200).json(products);
+    }
+
+    const filteredProducts = products.filter(product => {
+      return product.name.toLowerCase().includes(searchTerm.toLowerCase()) 
+      || product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    });
+
+    res.status(200).json(filteredProducts);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
