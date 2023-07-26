@@ -210,7 +210,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Check if email is verified
-    if (!user.isEmailVerified) {
+    if (!user.verified) {
       return res.status(401).json({ message: 'Email is not verified' });
     }
 
