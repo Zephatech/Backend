@@ -19,10 +19,21 @@ function isValidUWEmail(email) {
 
 async function sendVerificationCodeToEmail(email, verificationCode) {
   const mailOptions = {
-    from: '',
+    from: 'email-no-reply@uwtrade.com', // Add your sender email address here
     to: email,
     subject: 'UWaterloo Trade Verification Code',
-    text: `Your verification code is ${verificationCode}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px;">
+        <h1 style="text-align: center; color: #007BFF;">UWaterloo Trade Verification</h1>
+        <p style="text-align: center;">Dear User,</p>
+        <p style="text-align: center;">Your verification code is:</p>
+        <div style="text-align: center; background-color: #007BFF; color: white; padding: 10px; font-size: 24px; margin: 10px auto; width: 150px;">
+          ${verificationCode}
+        </div>
+        <p style="text-align: center;">Please use this code to complete the verification process.</p>
+        <p style="text-align: center;">Thank you for using our service!</p>
+      </div>
+    `,
   };
 
   if (false) {
@@ -110,6 +121,15 @@ export const verifyEmail = async (req: Request, res: Response) => {
     // Mark user's email as verified
     await User.markEmailAsVerified(email);
 
+    // Generate JWT with expiration time
+    const expiresIn = '7d'; // Token expires in a week
+    const secretKey = 'uwaterlootradesecret';
+    const userId = user.id;
+    const token = jwt.sign({ email, userId }, secretKey, { expiresIn });
+    res.cookie('jwt', token, {
+      httpOnly: true,
+    });
+
     res.status(200).json({ message: 'Email verification successful' });
   } catch (error) {
     console.log(error);
@@ -117,6 +137,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
   }
 };
 
+// Can be used for register verification and password reset
 export const resendVerificationCode = async (req: Request, res: Response) => {
   const { email } = req.body;
   try {
@@ -140,6 +161,38 @@ export const resendVerificationCode = async (req: Request, res: Response) => {
   }
 };
 
+export const resetPassword = async (req: Request, res: Response) => {
+  const { email, verificationCode, newPassword } = req.body;
+  if (!isValidPassword(newPassword)) {
+    return res.status(400).json({ message: 'Password does not meet the criteria' });
+  }
+
+  try {
+    // Find user by email
+    const user = await User.findByEmail(email);
+    if (user === null) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the verification code matches
+    if (user.verificationCode !== verificationCode) {
+      return res.status(400).json({ message: 'Invalid verification code' });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update user's password
+    await User.updatePassword(email, hashedPassword);
+
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -154,6 +207,11 @@ export const login = async (req: Request, res: Response) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Wrong Password' });
+    }
+
+    // Check if email is verified
+    if (!user.isEmailVerified) {
+      return res.status(401).json({ message: 'Email is not verified' });
     }
 
     // Generate JWT with expiration time
