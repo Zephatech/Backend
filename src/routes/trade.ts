@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTrade, cancelTrade, endTrade, acceptTrade } from '../controllers/tradeController';
+import { createTrade, cancelTrade, endTrade, acceptTrade, getAllTradeRecord } from '../controllers/tradeController';
 import authMiddleware from '../middleware/authMiddleware';
 
 const tradeRouter = express.Router();
@@ -15,5 +15,8 @@ tradeRouter.put('/:tradeId/cancel', authMiddleware, cancelTrade);
 
 // End a trade
 tradeRouter.put('/:tradeId/end', authMiddleware, endTrade);
+
+// Get all trade records
+tradeRouter.get('/getAllTrades', authMiddleware, getAllTradeRecord);
 
 export default tradeRouter;
