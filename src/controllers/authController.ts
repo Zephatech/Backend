@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/UserModel';
 import { transporter } from '../config/mail';
+import { AuthenticatedRequest } from '../types/authenticatedRequest';
 
 // Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit
 function isValidPassword(password) {
@@ -234,4 +235,16 @@ export const logout = (req: Request, res: Response) => {
     httpOnly: true,
   });
   res.status(200).json({ message: 'Logout successful' });
+};
+
+export const updateUserProfile = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { firstName, lastName, phoneNumber, facebookProfile, twitterProfile } = req.body;
+    const userId = req.user.userId;
+
+    const updatedUser = await User.updateUser(userId, firstName, lastName, phoneNumber, facebookProfile, twitterProfile);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

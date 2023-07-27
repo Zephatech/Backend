@@ -48,6 +48,20 @@ class UserModel {
     user.password = password;
     await this.userRepository.save(user)
   }
+
+  static async updateUser(userId, firstName, lastName, phoneNumber, facebookProfile, twitterProfile) {
+    const user = await this.userRepository.findOneBy({ id: userId })
+  
+    const updatedFields = {
+      firstName: firstName || user.firstName,
+      lastName: lastName || user.lastName,
+      phoneNumber: phoneNumber || user.phoneNumber,
+      facebookProfile: facebookProfile || user.facebookProfile,
+      twitterProfile: twitterProfile || user.twitterProfile,
+    };
+  
+    await this.userRepository.save({ ...user, ...updatedFields });
+  }
 }
 
 export default UserModel;
