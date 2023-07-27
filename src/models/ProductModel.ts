@@ -29,7 +29,7 @@ class ProductModel {
   }
 
   static async update(id, name, price, description, category, image) {
-    const product = await this.productRepository.findOne({ id });
+    const product = await this.productRepository.findOneBy({ id: id });
   
     const updatedFields = {
       name: name || product.name,
