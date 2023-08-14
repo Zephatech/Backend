@@ -86,7 +86,7 @@ export const register = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Generate email verification token
-    const token = jwt.sign({ email, }, 'uwaterlootradesecret');
+    const token = jwt.sign({ email }, 'uwaterlootradesecret');
 
     // Store user in the database
     await User.create(firstName, lastName, email, hashedPassword, false, verificationCode);
