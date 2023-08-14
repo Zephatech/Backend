@@ -29,28 +29,17 @@ class ProductModel {
   }
 
   static async update(id, name, price, description, category, image) {
-    const product = await this.productRepository.findOneBy({ id: id })
-    if (name) {
-      product.name = name;
-    }
-
-    if (price) {
-      product.price = price;
-    }
-
-    if (description) {
-      product.description = description;
-    }
-
-    if (category) {
-      product.category = category;
-    }
-
-    if (image) {
-      product.image = image;
-    }
-
-    await this.productRepository.save(product)
+    const product = await this.productRepository.findOneBy({ id: id });
+  
+    const updatedFields = {
+      name: name || product.name,
+      price: price || product.price,
+      description: description || product.description,
+      category: category || product.category,
+      image: image || product.image,
+    };
+  
+    await this.productRepository.save({ ...product, ...updatedFields });
   }
 
   static async delete(id) {
