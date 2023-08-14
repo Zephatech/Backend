@@ -22,12 +22,16 @@ class UserModel {
   }
 
   static async findByBuyerId(buyerId) {
-    const options = { buyerId: buyerId , relations: ['product'] }
+    const options = {  where: {
+      buyer: { id: buyerId },
+    }, relations: ['product'] }
     return await this.tradeRepository.find(options)
   }
 
   static async findBySellerId(sellerId) {
-    const options = { sellerId: sellerId, relations: ['product'] }
+    const options = {  where: {
+      seller: { id: sellerId },
+    }, relations: ['product'] }
     return await this.tradeRepository.find(options)
   }
 
