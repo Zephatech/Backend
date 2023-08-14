@@ -2,6 +2,7 @@ import { Trade } from "../entity/Trade";
 import myDataSource from "../config/dataSource";
 import { User } from "../entity/User";
 import { Product } from "../entity/Product";
+import { FindManyOptions } from "typeorm";
 
 class UserModel {
   private static tradeRepository = myDataSource.getRepository(Trade)
@@ -28,6 +29,17 @@ class UserModel {
   static async findBySellerId(sellerId) {
     const options = { sellerId: sellerId, relations: ['product'] }
     return await this.tradeRepository.find(options)
+  }
+
+  static async findByBuyerSellerProductId(buyerId: number, sellerId: number, productId: number) {
+    const options: FindManyOptions<Trade> = {
+      where: {
+        buyer: { id: buyerId },
+        seller: { id: sellerId },
+        product: { id: productId }
+      }
+    };
+    return await this.tradeRepository.find(options);
   }
 }
 
