@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Product from '../models/ProductModel';
 import { AuthenticatedRequest, PostItemRequest } from '../types/authenticatedRequest';
 import { isContentToxic } from '../utils/sensitiveTextChecker';
+import { isImageToxic } from '../utils/sensitiveImageChecker';
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
@@ -62,7 +63,11 @@ export const createProduct = async (req: PostItemRequest, res: Response) => {
     if(await isContentToxic (name) || await isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
     }
+
     const image = req.file ? req.uuid : ""
+    if(req.file && await isImageToxic(image)){
+      return res.status(400).json({ message: 'Product image contains sensitive content' });
+    }
     const product = await Product.create(ownerId, name, price, description, category, image);
     res.status(200).json(product);
   } catch (error) {
