@@ -1,9 +1,10 @@
 import express, { Router, Request, Response } from 'express';
-import { getAllProducts, getProductById, getProductsByUserId, createProduct, updateProduct, deleteProduct, deleteAllProductsByUserId } from '../controllers/productController';
+import { getAllProducts, getProductById, getProductsByUserId, createProduct, updateProduct, deleteProduct, deleteAllProductsByUserId, generateTextForImage } from '../controllers/productController';
 import authMiddleware from '../middleware/authMiddleware';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import { imageToText } from '../utils/imageToText';
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -27,6 +28,8 @@ router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 
 router.get('/user/:userId', getProductsByUserId);
+
+router.post('/generateTextForImage', authMiddleware, generateTextForImage);
 
 router.post('/', authMiddleware, upload.single('image'), createProduct);
 
