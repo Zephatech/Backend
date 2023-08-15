@@ -23,6 +23,9 @@ export class Product {
     @Column()
     image: string
 
+    @Column({default: false})
+    isSold: boolean
+
     @Column({ default: false })
     locked: boolean;
   

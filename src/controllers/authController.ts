@@ -4,8 +4,9 @@ import jwt from 'jsonwebtoken';
 import User from '../models/UserModel';
 import { transporter } from '../config/mail';
 import { AuthenticatedRequest } from '../types/authenticatedRequest';
+import { enable_mail_sender } from '../featureFlags';
 
-// Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit
+// Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit and 1 special character
 function isValidPassword(password) {
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[0-9a-zA-Z!@#$%^&*]{8,}$/;
   return passwordRegex.test(password);
@@ -31,13 +32,13 @@ async function sendVerificationCodeToEmail(email, verificationCode) {
         <div style="text-align: center; background-color: #007BFF; color: white; padding: 10px; font-size: 24px; margin: 10px auto; width: 150px;">
           ${verificationCode}
         </div>
-        <p style="text-align: center;">Please use this code to complete the verification process.</p>
+        <p style="text-align: center;">Please enter this code <a href="http://localhost:3000/verify-email?email=${email}">here</a> to complete the verification process.</p>
         <p style="text-align: center;">Thank you for using our service!</p>
       </div>
     `,
   };
 
-  if (false) {
+  if (enable_mail_sender) {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);

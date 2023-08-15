@@ -25,7 +25,7 @@ class ProductModel {
     product.category = category;
     product.image = image;
 
-    await this.productRepository.save(product)
+    return await this.productRepository.save(product)
   }
 
   static async update(id, name, price, description, category, image) {
@@ -39,7 +39,7 @@ class ProductModel {
       image: image || product.image,
     };
   
-    await this.productRepository.save({ ...product, ...updatedFields });
+    return await this.productRepository.save({ ...product, ...updatedFields });
   }
 
   static async delete(id) {

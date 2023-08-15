@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from "typeorm";
 import { User } from "./User";
 import { Product } from "./Product";
 
@@ -30,4 +30,7 @@ export class Trade {
 
   @Column({ nullable: true })
   endedAt: Date;
+
+  @Column({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }

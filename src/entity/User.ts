@@ -1,7 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import myDataSource from "../config/dataSource"
 
 @Entity()
 export class User {
+    private static userRepository = myDataSource.getRepository(User)
+
+    static async findById(id) {
+        return await this.userRepository.findOneBy({ id: id })
+    }
     @PrimaryGeneratedColumn()
     id: number
 

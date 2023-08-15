@@ -5,7 +5,6 @@ export const isContentToxic = async (content: String) => {
   if(enable_AI_text_checker == false){
     return false
   }
-  
   try {
     const response: AxiosResponse<any, any> = await axios.post('http://127.0.0.1:5000/predict', {text: `${content}`});
     const result = await response.data.result

@@ -25,6 +25,10 @@ export const createTrade = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: 'buyer or product not found' });
     }
 
+    if (product.isSold == true) {
+      return res.status(404).json({ message: 'product has been already sold'})
+    }
+
     const owner: UserEntity = await User.findById(product.ownerId);
     if (!owner) {
       return res.status(404).json({ message: 'owner not found' });
@@ -57,7 +61,7 @@ export const acceptTrade = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    if (!trade.canceledAt != null) {
+    if (!trade.canceledAt == null) {
       return res.status(400).json({ message: 'Cannot confirm a canceled trade' });
     }
 
@@ -71,7 +75,7 @@ export const acceptTrade = async (req: AuthenticatedRequest, res: Response) => {
       await transactionalEntityManager.save(product);
     });
 
-    res.status(200).json(trade);
+    res.status(200).json({trade});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -101,7 +105,7 @@ export const cancelTrade = async (req: AuthenticatedRequest, res: Response) => {
       await transactionalEntityManager.remove(trade);
     });
 
-    res.status(200).json(trade);
+    res.status(200).json({trade});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -123,12 +127,13 @@ export const endTrade = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     trade.endedAt = new Date();
-
+    trade.product.isSold = true;
     await myDataSource.manager.transaction(async transactionalEntityManager => {
       await transactionalEntityManager.save(trade);
+      await transactionalEntityManager.save(trade.product)
     });
 
-    res.status(200).json(trade);
+    res.status(200).json({trade});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

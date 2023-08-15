@@ -7,7 +7,8 @@ import { imageToText } from '../utils/imageToText';
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
-    const products = await Product.findAll();
+    let products = await Product.findAll();
+    products = products.filter(product => !product.isSold && !product.locked)
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -59,7 +60,6 @@ export const getProductsByUserId = async (req: Request, res: Response) => {
 export const createProduct = async (req: PostItemRequest, res: Response) => {
   try {
     const ownerId = req.user.userId;    
-  
     const { name, price, description, category } = req.body;
     if(await isContentToxic (name) || await isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
@@ -70,17 +70,17 @@ export const createProduct = async (req: PostItemRequest, res: Response) => {
       return res.status(400).json({ message: 'Product image contains sensitive content' });
     }
     const product = await Product.create(ownerId, name, price, description, category, image);
-    res.status(200).json(product);
+    res.status(200).json({product});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
 
-export const updateProduct = async (req: AuthenticatedRequest, res: Response) => {
+export const updateProduct = async (req: PostItemRequest, res: Response) => {
   try {
     const productId = req.params.id;
     const ownerId = req.user.userId;
-    const { name, price, description, category, image } = req.body;
+    const { name, price, description, category } = req.body;
     
     if(await isContentToxic (name) || await isContentToxic (description)){
       return res.status(400).json({ message: 'Product name or description contains sensitive text' });
@@ -98,9 +98,9 @@ export const updateProduct = async (req: AuthenticatedRequest, res: Response) =>
     if (product.locked) {
       return res.status(403).json({ message: 'Product is locked, there is a comfirmed trade for this product, please cancel if you want to change the product' });
     }
-
+    const image = req.file ? req.uuid : ""
     const updatedProduct = await Product.update(productId, name, price, description, category, image);
-    res.status(200).json(updatedProduct);
+    res.status(200).json({product: updatedProduct});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -121,7 +121,7 @@ export const deleteProduct = async (req: AuthenticatedRequest, res: Response) =>
     }
     
     const deletedProduct = await Product.delete(productId);
-    res.status(200).json(deletedProduct);
+    res.status(200).json({deletedProduct});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -147,14 +147,13 @@ export const deleteAllProductsByUserId = async (req: AuthenticatedRequest, res: 
 export const generateTextForImage = async (req: PostItemRequest, res:Response) => {
   try {
     let image = req.file ? req.uuid : ""
-    image = "cat.jpg"
+    console.log("+++++++++++")
     console.log(image)
-    console.log(await isImageToxic(image))
     if(req.file && await isImageToxic(image)){
       return res.status(400).json({ message: 'Product image contains sensitive content' });
     }
     const result = await imageToText(image);
-    res.status(200).json(result);
+    res.status(200).json({result});
 
     // res.status(200).json(null);
   } catch (error) {
