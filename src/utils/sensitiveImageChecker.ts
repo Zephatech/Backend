@@ -1,13 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 import { enable_AI_text_checker } from '../featureFlags';
 
-export const isImageToxic = async (content: String) => {
+export const isImageToxic = async (path: String) => {
   if(enable_AI_text_checker == false){
     return false
   }
   let relativePathHardCode = '../../uw-trade/public/'
   try {
-    const response: AxiosResponse<any, any> = await axios.post('http://127.0.0.1:5000/predict_image', {path: `${relativePathHardCode}/${content}`});
+    const response: AxiosResponse<any, any> = await axios.post('http://127.0.0.1:5000/predict_image', {path: `${relativePathHardCode}/${path}`});
     const result = await response.data.result
 
     if (result == "Toxic") {
