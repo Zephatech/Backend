@@ -3,10 +3,12 @@ import Product from '../models/ProductModel';
 import { AuthenticatedRequest, PostItemRequest } from '../types/authenticatedRequest';
 import { isContentToxic } from '../utils/sensitiveTextChecker';
 import { isImageToxic } from '../utils/sensitiveImageChecker';
+import { imageToText } from '../utils/imageToText';
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
     const products = await Product.findAll();
+    products.filter(product => !product.isSold)
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -142,3 +144,21 @@ export const deleteAllProductsByUserId = async (req: AuthenticatedRequest, res: 
     res.status(500).json({ message: error.message });
   }
 };
+
+export const generateTextForImage = async (req: PostItemRequest, res:Response) => {
+  try {
+    let image = req.file ? req.uuid : ""
+    image = "cat.jpg"
+    console.log(image)
+    console.log(await isImageToxic(image))
+    if(req.file && await isImageToxic(image)){
+      return res.status(400).json({ message: 'Product image contains sensitive content' });
+    }
+    const result = await imageToText(image);
+    res.status(200).json(result);
+
+    // res.status(200).json(null);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
