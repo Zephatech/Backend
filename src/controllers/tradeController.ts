@@ -15,8 +15,9 @@ export const createTrade = async (req: AuthenticatedRequest, res: Response) => {
 
     const buyer: UserEntity = await User.findById(buyerId);
     const product: ProductEntity = await Product.findById(productId);
+    const tradeRecord: Trade[] = await Trade.findByBuyerSellerProductId(buyerId, product.ownerId, productId);
 
-    if(Trade.findByBuyerSellerProductId(buyerId, product.ownerId, productId)) {
+    if(tradeRecord.length > 0) {
       return res.status(400).json({ message: 'Trade already exists' });
     }
     
