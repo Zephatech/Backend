@@ -1,1 +1,1 @@
-export const enable_AI_text_checker = false;
+export const enable_AI_text_checker : boolean = false;

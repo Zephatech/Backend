@@ -7,7 +7,7 @@ export const isContentToxic = async (content: String) => {
   }
   
   try {
-    const response: AxiosResponse<any, any> = await axios.post('http://localhost:5000/predict', {text: `${content}`});
+    const response: AxiosResponse<any, any> = await axios.post('http://127.0.0.1:5000/predict', {text: `${content}`});
     const result = await response.data.result
 
     if (result == "Toxic") {
