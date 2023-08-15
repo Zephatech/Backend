@@ -30,7 +30,6 @@ def sensitive_text_inference(text, model = local_model, tokenizer = tokenizer):
         else:
             return "NonToxic"
         
-   
     bert_input = tokenizer(text,padding='max_length', max_length = 50,
                        truncation=True, return_tensors="pt")
     example_mask = bert_input['attention_mask']
@@ -46,26 +45,6 @@ def get_nsfw_score(image, model = model_image_toxic):
         return "Need further review"
     return "Safe"
 
-app = Flask(__name__)
-
-@app.route('/predict', methods=['POST'])
-def predict_text():
-    data = request.get_json()  # 获取POST请求中的数据
-    text = data['text']  # 获取文本数据
-
-    result = sensitive_text_inference(text)
-
-    return jsonify({'result': result})  # 返回推断结果
-
-@app.route('/predict_image', methods=['POST'])
-def predict_image():
-    data = request.get_json()  # 获取POST请求中的数据
-    path = data['path']  # 获取文本数据
-
-    result = get_nsfw_score(path)
-
-    return jsonify({'result': result})  # 返回推断结果
-
 # core information generation model
 image_to_text_model = pipeline("image-to-text",model="Salesforce/blip-image-captioning-base")
 # fix spelling mistakes
@@ -79,8 +58,6 @@ r = Rake()
 tokenizer = AutoTokenizer.from_pretrained("HamidRezaAttar/gpt2-product-description-generator")
 model = AutoModelForCausalLM.from_pretrained("HamidRezaAttar/gpt2-product-description-generator")
 generator = pipeline('text-generation', model, tokenizer=tokenizer, config={'max_length':100})
-
-
 
 def generate_core_information(image, model = image_to_text_model):
     core_info = model(image)
@@ -115,14 +92,34 @@ def deploy_function(image, inference = "other"):
         description = correct_spelling(description)
     return core_info, category, description
 
+
+app = Flask(__name__)
+@app.route('/predict', methods=['POST'])
+def predict_text():
+    data = request.get_json()
+    text = data['text']
+
+    result = sensitive_text_inference(text)
+
+    return jsonify({'result': result})
+
+@app.route('/predict_image', methods=['POST'])
+def predict_image():
+    data = request.get_json()
+    path = data['path']
+
+    result = get_nsfw_score(path)
+
+    return jsonify({'result': result})
+
 @app.route('/image_to_text', methods=['POST'])
 def image_to_tect():
-    data = request.get_json()  # 获取POST请求中的数据
-    path = data['path']  # 获取文本数据
+    data = request.get_json()
+    path = data['path']
 
     core_info, category, description  = deploy_function(path)
 
-    return jsonify({"title": core_info, "category": category, "description": description})  # 返回推断结果
+    return jsonify({"title": core_info, "category": category, "description": description})
 
 
 if __name__ == '__main__':
