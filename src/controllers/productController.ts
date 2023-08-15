@@ -8,7 +8,6 @@ import { imageToText } from '../utils/imageToText';
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
     const products = await Product.findAll();
-    products.filter(product => !product.isSold)
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
