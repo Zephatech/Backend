@@ -6,7 +6,8 @@
   "main": "src/app.ts",
   "scripts": {
     "start": "ts-node src/app.ts",
-    "test": "N/A"
+    "test": "N/A",
+    "clear": "typeorm cache:clear"
   },
   "repository": {
     "type": "git",

@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from 'express';
 import {register, verifyEmail, resendVerificationCode , login, logout, resetPassword} from '../controllers/authController';
 import authMiddleware from '../middleware/authMiddleware';
 import { AuthenticatedRequest } from '../types/authenticatedRequest';
+import { User } from '../entity/User';
 
 const router: Router = express.Router();
 router.post('/register', register);
@@ -63,8 +64,9 @@ router.get('/login', (req: Request, res: Response) => {
   res.send(loginForm);
 });
 
-router.get('/getCurrentUserId', authMiddleware, (req: AuthenticatedRequest, res: Response) => {
-  res.status(200).json({ userId: req.user.userId });
+router.get('/getCurrentUserId', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  const user = await User.findById(req.user.userId);
+  res.status(200).json({ userId: req.user.userId, name: user?.firstName });
 });
 
 router.get('/resetPassword', (req: Request, res: Response) => {

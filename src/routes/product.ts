@@ -29,11 +29,11 @@ router.get('/:id', getProductById);
 
 router.get('/user/:userId', getProductsByUserId);
 
-router.post('/generateTextForImage', authMiddleware, generateTextForImage);
+router.post('/generateTextForImage', authMiddleware, upload.single('image'), generateTextForImage);
 
 router.post('/', authMiddleware, upload.single('image'), createProduct);
 
-router.put('/:id', authMiddleware, updateProduct);
+router.put('/:id', authMiddleware, upload.single('image'), updateProduct);
 
 router.delete('/:id', authMiddleware, deleteProduct);
 
