@@ -113,6 +113,11 @@ The suggested fields are:
 npm run seed
 ```
 
+5. Alternatively, use docker compose to spin up backend with database: 
+```
+docker compose build
+docker compose up
+```
 ## Documentation
 
 Here is the [document](https://docs.google.com/document/d/1PB7UbdsNjgnukX7bS5LFWs7b6LLI4LPXU7PcPP-Y-gA/edit) that detailed explains our project.
