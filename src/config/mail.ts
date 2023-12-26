@@ -1,4 +1,4 @@
-import nodemailer, { Transporter } from 'nodemailer';
+import nodemailer, { Transporter } from 'nodemailer'
 
 // TODO: Add your email account credentials
 export const transporter: Transporter = nodemailer.createTransport({
@@ -6,8 +6,6 @@ export const transporter: Transporter = nodemailer.createTransport({
   port: 587,
   auth: {
     user: 'zhubolin010118@gmail.com',
-    pass: 'PRjY2W1XcLTKZCMd'
-  }
-});
-
-
+    pass: 'PRjY2W1XcLTKZCMd',
+  },
+})

@@ -1,16 +1,23 @@
-import express, { Router, Request, Response } from 'express';
-import {register, verifyEmail, resendVerificationCode , login, logout, resetPassword} from '../controllers/authController';
-import authMiddleware from '../middleware/authMiddleware';
-import { AuthenticatedRequest } from '../types/authenticatedRequest';
-import { User } from '../entity/User';
+import express, { Router, Request, Response } from 'express'
+import {
+  register,
+  verifyEmail,
+  resendVerificationCode,
+  login,
+  logout,
+  resetPassword,
+} from '../controllers/authController'
+import authMiddleware from '../middleware/authMiddleware'
+import { AuthenticatedRequest } from '../types/authenticatedRequest'
+import { User } from '../entity/User'
 
-const router: Router = express.Router();
-router.post('/register', register);
+const router: Router = express.Router()
+router.post('/register', register)
 router.post('/verifyEmail', verifyEmail)
 router.post('/resendVerificationCode', resendVerificationCode)
 router.post('/resetPassword', resetPassword)
-router.post('/login', login);
-router.get('/logout', logout);
+router.post('/login', login)
+router.get('/logout', logout)
 
 // TODO: remove these routes (After building up testing)
 router.get('/register', (req: Request, res: Response) => {
@@ -31,10 +38,10 @@ router.get('/register', (req: Request, res: Response) => {
 
       <input type="submit" value="Register">
     </form>
-  `;
-  console.log('register');
-  res.send(registrationForm);
-});
+  `
+  console.log('register')
+  res.send(registrationForm)
+})
 
 router.get('/verifyEmail', (req: Request, res: Response) => {
   const verifyEmailForm: string = `
@@ -46,9 +53,9 @@ router.get('/verifyEmail', (req: Request, res: Response) => {
       <input type="text" id="verificationCode" name="verificationCode" required><br><br>
       <input type="submit" value="Verify">
     </form>
-  `;
-  res.send(verifyEmailForm);
-});
+  `
+  res.send(verifyEmailForm)
+})
 
 router.get('/login', (req: Request, res: Response) => {
   const loginForm: string = `
@@ -60,14 +67,18 @@ router.get('/login', (req: Request, res: Response) => {
       <input type="password" id="password" name="password" required><br><br>
       <input type="submit" value="Login">
     </form>
-  `;
-  res.send(loginForm);
-});
+  `
+  res.send(loginForm)
+})
 
-router.get('/getCurrentUserId', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
-  const user = await User.findById(req.user.userId);
-  res.status(200).json({ userId: req.user.userId, name: user?.firstName });
-});
+router.get(
+  '/getCurrentUserId',
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const user = await User.findById(req.user.userId)
+    res.status(200).json({ userId: req.user.userId, name: user?.firstName })
+  }
+)
 
 router.get('/resetPassword', (req: Request, res: Response) => {
   const resetPasswordForm: string = `
@@ -81,9 +92,9 @@ router.get('/resetPassword', (req: Request, res: Response) => {
       <input type="password" id="newPassword" name="newPassword" required><br><br>
       <input type="submit" value="Reset Password">
     </form>
-  `;
-  res.send(resetPasswordForm);
-});
+  `
+  res.send(resetPasswordForm)
+})
 
 router.get('/resentVerificationCode', (req: Request, res: Response) => {
   const resendVerificationCodeForm: string = `
@@ -93,9 +104,8 @@ router.get('/resentVerificationCode', (req: Request, res: Response) => {
       <input type="email" id="email" name="email" required><br><br>
       <input type="submit" value="Resend Verification Code">
     </form>
-  `;
-  res.send(resendVerificationCodeForm);
-});
+  `
+  res.send(resendVerificationCodeForm)
+})
 
-
-export default router;
+export default router

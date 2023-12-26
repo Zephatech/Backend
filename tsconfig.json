@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
-     "lib": [
-        "es5",
-        "es6",
-        "dom"
-     ],
-     "target": "es5",
-     "module": "commonjs",
-     "moduleResolution": "node",
-     "outDir": "./build",
-     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-     "emitDecoratorMetadata": true,
-     "experimentalDecorators": true,
-     "sourceMap": true
+    "lib": ["es5", "es6", "dom"],
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true
   }
 }
