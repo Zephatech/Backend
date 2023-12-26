@@ -1,5 +1,5 @@
-import { Product } from "../entity/Product";
-import myDataSource from "../config/dataSource";
+import { Product } from '../entity/Product'
+import myDataSource from '../config/dataSource'
 
 class ProductModel {
   private static productRepository = myDataSource.getRepository(Product)
@@ -17,29 +17,32 @@ class ProductModel {
   }
 
   static async create(ownerId, name, price, description, category, image) {
-    const product = new Product();
-    product.ownerId = ownerId;
-    product.name = name;
-    product.price = price;
-    product.description = description;
-    product.category = category;
-    product.image = image;
+    const product = new Product()
+    product.ownerId = ownerId
+    product.name = name
+    product.price = price
+    product.description = description
+    product.category = category
+    product.image = image
 
     return await this.productRepository.save(product)
   }
 
   static async update(id, name, price, description, category, image) {
-    const product = await this.productRepository.findOneBy({ id: id });
-  
+    const product = await this.productRepository.findOneBy({ id: id })
+
     const updatedFields = {
       name: name || product.name,
       price: price || product.price,
       description: description || product.description,
       category: category || product.category,
       image: image || product.image,
-    };
-  
-    return await this.productRepository.save({ ...product, ...updatedFields });
+    }
+
+    return await this.productRepository.save({
+      ...product,
+      ...updatedFields,
+    })
   }
 
   static async delete(id) {
@@ -53,9 +56,11 @@ class ProductModel {
   }
 
   static async deleteAllByUserId(userId) {
-    const products = await this.productRepository.findOneBy({ ownerId: userId })
+    const products = await this.productRepository.findOneBy({
+      ownerId: userId,
+    })
     await this.productRepository.remove(products)
   }
 }
 
-export default ProductModel;
+export default ProductModel
