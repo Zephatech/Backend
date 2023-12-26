@@ -1,25 +1,32 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 interface AuthenticatedRequest extends Request {
-  user?: JwtPayload;
+  user?: JwtPayload
 }
 
-const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const token: string | undefined = req.cookies.jwt;
-  console.log(req.cookies);
+const authMiddleware = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const token: string | undefined = req.cookies.jwt
+  console.log(req.cookies)
   if (!token) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
   try {
-    const decoded: { email: string, userId: number } = jwt.verify(token, 'uwaterlootradesecret');
-    req.user = decoded;
-    next();
+    const decoded: { email: string; userId: number } = jwt.verify(
+      token,
+      'uwaterlootradesecret'
+    )
+    req.user = decoded
+    next()
   } catch (error) {
-    console.log(error);
-    res.status(401).json({ message: 'Invalid token' });
+    console.log(error)
+    res.status(401).json({ message: 'Invalid token' })
   }
-};
+}
 
-export default authMiddleware;
+export default authMiddleware

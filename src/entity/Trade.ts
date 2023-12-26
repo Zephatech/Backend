@@ -1,36 +1,46 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from "typeorm";
-import { User } from "./User";
-import { Product } from "./Product";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+} from 'typeorm'
+import { User } from './User'
+import { Product } from './Product'
 
 @Entity()
 export class Trade {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: "buyerId" })
-  buyer: User;
+  @JoinColumn({ name: 'buyerId' })
+  buyer: User
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: "sellerId" })
-  seller: User;
+  @JoinColumn({ name: 'sellerId' })
+  seller: User
 
   @ManyToOne(() => Product)
-  @JoinColumn({ name: "productId" })
-  product: Product;
+  @JoinColumn({ name: 'productId' })
+  product: Product
 
   @Column({ default: false })
-  confirmed: boolean;
+  confirmed: boolean
 
   @Column({ nullable: true })
-  confirmedAt: Date;
+  confirmedAt: Date
 
   @Column({ nullable: true })
-  canceledAt: Date;
+  canceledAt: Date
 
   @Column({ nullable: true })
-  endedAt: Date;
+  endedAt: Date
 
-  @Column({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+  @Column({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date
 }
