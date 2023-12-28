@@ -1,0 +1,9 @@
+torch
+flask
+transformers
+nsfw_detector
+rake_nltk
+happytransformer
+nltk==3.8.1
+protobuf
+tensorflow==2.13.0
