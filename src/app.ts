@@ -45,6 +45,10 @@ app.use('/auth', authRoutes)
 app.use('/products', productRoutes)
 app.use('/trade', tradeRoutes)
 
+app.get('/', (req, res) => {
+  res.send('Hello There')
+})
+
 // Start the server
 const port = 3001
 app.listen(port, () => {
