@@ -7,6 +7,7 @@ import authRoutes from './routes/auth'
 import productRoutes from './routes/product'
 import tradeRoutes from './routes/trade'
 import myDataSource from './config/dataSource'
+import profileRoutes from './routes/profile'
 
 const app = express()
 
@@ -44,6 +45,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 app.use('/auth', authRoutes)
 app.use('/products', productRoutes)
 app.use('/trade', tradeRoutes)
+app.use('/profile', profileRoutes)
 
 app.get('/', (req, res) => {
   res.send('Hello There')
