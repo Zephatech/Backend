@@ -62,6 +62,15 @@ export const getProductsByUserId = async (req: Request, res: Response) => {
   }
 }
 
+export const getMyListing = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const products = await Product.findByUserId(req.user.userId)
+    res.status(200).json(products)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 export const createProduct = async (req: PostItemRequest, res: Response) => {
   try {
     const ownerId = req.user.userId

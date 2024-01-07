@@ -13,7 +13,7 @@ class ProductModel {
   }
 
   static async findByUserId(userId) {
-    return await this.productRepository.findOneBy({ ownerId: userId })
+    return await this.productRepository.findBy({ ownerId: userId })
   }
 
   static async create(ownerId, name, price, description, category, image) {
