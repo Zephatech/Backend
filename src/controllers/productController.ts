@@ -10,9 +10,15 @@ import { imageToText } from '../utils/imageToText'
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
-    let products = await Product.findAll()
-    products = products.filter((product) => !product.isSold && !product.locked)
-    res.status(200).json(products)
+    if(req.query.q) {
+      let products = await Product.findAllByKeyword(req.query.q as string)
+      products = products.filter((product) => !product.isSold && !product.locked)
+      res.status(200).json(products)
+    } else {
+      let products = await Product.findAll()
+      products = products.filter((product) => !product.isSold && !product.locked)
+      res.status(200).json(products)
+    }
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

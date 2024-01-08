@@ -8,6 +8,17 @@ class ProductModel {
     return await this.productRepository.find()
   }
 
+  static async findAllByKeyword(keyword) {
+    return await await this.productRepository
+      .createQueryBuilder('product')
+      .where('product.isSold = :isSold', { isSold: false })
+      .andWhere('product.locked = :locked', { locked: false })
+      .andWhere(
+        '(product.name ILIKE :searchQuery OR product.description ILIKE :searchQuery)',
+        { searchQuery: `%${keyword}%` }
+      ).getMany()
+  }
+
   static async findById(id) {
     return await this.productRepository.findOneBy({ id: id })
   }
