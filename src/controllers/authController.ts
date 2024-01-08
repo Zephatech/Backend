@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import User from '../models/UserModel'
 import { transporter } from '../config/mail'
 import { enable_mail_sender } from '../featureFlags'
+import { AuthenticatedRequest } from '../types/authenticatedRequest'
 
 // Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit and 1 special character
 function isValidPassword(password) {
@@ -250,4 +251,14 @@ export const logout = (req: Request, res: Response) => {
     httpOnly: true,
   })
   res.status(200).json({ message: 'Logout successful' })
+}
+
+export const getCurrentUserIdAndName = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.user.userId)
+    res.status(200).json({ userId: req.user.userId, name: user?.firstName })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
 }
