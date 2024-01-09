@@ -36,11 +36,18 @@ services:
     container_name: ai
     image: ai
     build:
+<<<<<<< HEAD
       dockerfile: ai.dockerfile
     ports:
       - '8000:8000'
     volumes:
       - aicache:/root/.cache/huggingface
+=======
+      context: .
+      dockerfile: ai.dockerfile
+    ports:
+      - '8000:8000'
+>>>>>>> 422bc68cebf3caf3af8f247e522f23a28a25452b
 
 volumes:
   pgdata: {}
