@@ -3,6 +3,7 @@ import {
   getAllProducts,
   getProductById,
   getProductsByUserId,
+  getMyListing,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -34,9 +35,11 @@ const router: Router = express.Router()
 
 router.get('/', getAllProducts)
 
-router.get('/:id', getProductById)
+router.get('/myListings', authMiddleware, getMyListing)
 
 router.get('/user/:userId', getProductsByUserId)
+
+router.get('/:id', getProductById)
 
 router.post(
   '/generateTextForImage',
