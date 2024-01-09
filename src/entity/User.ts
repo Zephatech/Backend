@@ -35,9 +35,6 @@ export class User {
   @Column({ nullable: true })
   facebookProfile: string
 
-  @Column({ nullable: true })
-  twitterProfile: string
-
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date
 }

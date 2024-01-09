@@ -6,10 +6,9 @@ import {
   login,
   logout,
   resetPassword,
+  getCurrentUserIdAndName
 } from '../controllers/authController'
 import authMiddleware from '../middleware/authMiddleware'
-import { AuthenticatedRequest } from '../types/authenticatedRequest'
-import { User } from '../entity/User'
 
 const router: Router = express.Router()
 router.post('/register', register)
@@ -18,6 +17,7 @@ router.post('/resendVerificationCode', resendVerificationCode)
 router.post('/resetPassword', resetPassword)
 router.post('/login', login)
 router.get('/logout', logout)
+router.get('/getCurrentUserId',authMiddleware,getCurrentUserIdAndName)
 
 // TODO: remove these routes (After building up testing)
 router.get('/register', (req: Request, res: Response) => {
@@ -70,15 +70,6 @@ router.get('/login', (req: Request, res: Response) => {
   `
   res.send(loginForm)
 })
-
-router.get(
-  '/getCurrentUserId',
-  authMiddleware,
-  async (req: AuthenticatedRequest, res: Response) => {
-    const user = await User.findById(req.user.userId)
-    res.status(200).json({ userId: req.user.userId, name: user?.firstName })
-  }
-)
 
 router.get('/resetPassword', (req: Request, res: Response) => {
   const resetPasswordForm: string = `
