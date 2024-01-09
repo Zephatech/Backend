@@ -1,8 +1,5 @@
-import torch
-from flask import Flask, request, jsonify
 from torch import nn
-from transformers import DistilBertTokenizerFast
-from transformers import BertModel, DistilBertModel, DistilBertConfig
+from transformers import DistilBertModel
 
 class DistilBertForSequenceClassification(nn.Module):
     def __init__(self, config):
