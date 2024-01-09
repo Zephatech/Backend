@@ -32,5 +32,16 @@ services:
     volumes:
       - ./src:/usr/src/app/src
 
+  ai:
+    container_name: ai
+    image: ai
+    build:
+      dockerfile: ai.dockerfile
+    ports:
+      - '8000:8000'
+    volumes:
+      - aicache:/root/.cache/huggingface
+
 volumes:
   pgdata: {}
+  aicache: {}

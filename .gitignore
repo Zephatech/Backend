@@ -1,3 +1,6 @@
 .env
 myenv
 node_modules
+nsfw_mobilenet2.224x224.h5
+sensitive_model_v1.pt
+.DS_Store
