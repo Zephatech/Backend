@@ -1,16 +1,4 @@
-<<<<<<< HEAD
 torch==2.1.2
 Flask==3.0.0
 transformers==4.36.2
 urllib3==1.26.6
-=======
-torch
-flask
-transformers
-nsfw_detector
-rake_nltk
-happytransformer
-nltk==3.8.1
-protobuf
-tensorflow==2.13.0
->>>>>>> 422bc68cebf3caf3af8f247e522f23a28a25452b
