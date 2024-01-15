@@ -19,7 +19,7 @@ services:
     image: backend
     build:
       context: .
-      dockerfile: backend.dockerfile
+      dockerfile: Dockerfile
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; npm start'
     depends_on:
       - db

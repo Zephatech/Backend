@@ -53,6 +53,6 @@ app.get('/', (req, res) => {
 
 // Start the server
 const port = 3001
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log(`Server is running on port ${port}`)
 })
