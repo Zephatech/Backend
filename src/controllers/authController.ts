@@ -24,7 +24,7 @@ async function sendVerificationCodeToEmail(email, verificationCode) {
   const mailOptions = {
     from: 'no-reply@uwtrade.com', // Add your sender email address here
     to: email,
-    subject: 'UWaterloo Trade Verification Code',
+    subject: 'UWTrade Verification Code',
     html: `
       <div style="font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px;">
         <h1 style="text-align: center; color: #007BFF;">UWaterloo Trade Verification</h1>
@@ -34,6 +34,37 @@ async function sendVerificationCodeToEmail(email, verificationCode) {
           ${verificationCode}
         </div>
         <p style="text-align: center;">Please enter this code <a href="http://localhost:3000/verify-email?email=${email}">here</a> to complete the verification process.</p>
+        <p style="text-align: center;">Thank you for using our service!</p>
+      </div>
+    `,
+  }
+
+  if (enable_mail_sender) {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error)
+        throw error
+      } else {
+        console.log('Email sent: ' + info.response)
+      }
+    })
+  }
+}
+
+async function sendVerificationCodeToEmailForResetPassword(email, verificationCode) {
+  const mailOptions = {
+    from: 'no-reply@uwtrade.com', // Add your sender email address here
+    to: email,
+    subject: 'UWTrade Verification Code For Password Reset',
+    html: `
+      <div style="font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px;">
+        <h1 style="text-align: center; color: #007BFF;">UWaterloo Trade Verification</h1>
+        <p style="text-align: center;">Dear User,</p>
+        <p style="text-align: center;">Your verification code is:</p>
+        <div style="text-align: center; background-color: #007BFF; color: white; padding: 10px; font-size: 24px; margin: 10px auto; width: 150px;">
+          ${verificationCode}
+        </div>
+        <p style="text-align: center;">Please enter this code <a href="http://localhost:3000/password-reset">here</a> to complete the verification process.</p>
         <p style="text-align: center;">Thank you for using our service!</p>
       </div>
     `,
@@ -204,6 +235,29 @@ export const resetPassword = async (req: Request, res: Response) => {
     await User.updatePassword(email, hashedPassword)
 
     res.status(200).json({ message: 'Password reset successful' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
+export const requestResetPassword = async (req: Request, res: Response) => {
+  const { email } = req.body
+  try {
+    // Find user by email
+    const user = await User.findByEmail(email)
+    if (user === null) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Generate verification code
+    const verificationCode = generateVerificationCode() // Generate a random verification code
+
+    // Update user's verification code
+    user.verificationCode = verificationCode
+    await User.updateverificationCode(email, verificationCode)
+
+    sendVerificationCodeToEmailForResetPassword(email, verificationCode) // Implement this function to send verification code to user's email
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Internal server error' })
