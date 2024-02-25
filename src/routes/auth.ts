@@ -6,7 +6,8 @@ import {
   login,
   logout,
   resetPassword,
-  getCurrentUserIdAndName
+  getCurrentUserIdAndName,
+  requestResetPassword
 } from '../controllers/authController'
 import authMiddleware from '../middleware/authMiddleware'
 
@@ -15,6 +16,7 @@ router.post('/register', register)
 router.post('/verifyEmail', verifyEmail)
 router.post('/resendVerificationCode', resendVerificationCode)
 router.post('/resetPassword', resetPassword)
+router.post('/requestResetPassword', requestResetPassword)
 router.post('/login', login)
 router.get('/logout', logout)
 router.get('/getCurrentUserId',authMiddleware,getCurrentUserIdAndName)
