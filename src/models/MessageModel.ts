@@ -14,7 +14,7 @@ class MessageModel {
         return await this.messageRepository.save(newMessage);
     }
 
-    static async createWithoutSave(senderId, receiverId, message, conversationId) {
+    static createWithoutSave(senderId, receiverId, message, conversationId) {
         const newMessage = new Message();
         newMessage.sender = senderId;
         newMessage.receiver = receiverId;

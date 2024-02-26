@@ -31,4 +31,7 @@ export class Product {
 
   @Column({ nullable: true })
   lockedAt: Date
+
+  @Column({ type: 'json', nullable: true })
+  options: Record<string, any> | null;
 }
