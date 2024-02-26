@@ -27,7 +27,7 @@ class ProductModel {
     return await this.productRepository.findBy({ ownerId: userId })
   }
 
-  static async create(ownerId, name, price, description, category, image) {
+  static async create(ownerId, name, price, description, category, image, options) {
     const product = new Product()
     product.ownerId = ownerId
     product.name = name
@@ -35,6 +35,7 @@ class ProductModel {
     product.description = description
     product.category = category
     product.image = image
+    product.options = options
 
     return await this.productRepository.save(product)
   }

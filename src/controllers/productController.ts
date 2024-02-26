@@ -81,6 +81,8 @@ export const createProduct = async (req: PostItemRequest, res: Response) => {
   try {
     const ownerId = req.user.userId
     const { name, price, description, category } = req.body
+    const options = req.body.options ? JSON.parse(req.body.options) : null;
+
     if ((await isContentToxic(name)) || (await isContentToxic(description))) {
       return res.status(400).json({
         message: 'Product name or description contains sensitive text',
@@ -99,7 +101,8 @@ export const createProduct = async (req: PostItemRequest, res: Response) => {
       price,
       description,
       category,
-      image
+      image,
+      options
     )
     res.status(200).json({ product })
   } catch (error) {
