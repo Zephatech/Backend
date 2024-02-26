@@ -1,9 +1,8 @@
 import express from "express";
 import authMiddleware from '../middleware/authMiddleware'
-import { getAllConversations } from "../controllers/conversationController";
+import { getAllConversationsForCurrentUser } from "../controllers/conversationController";
 
 const router = express.Router();
-router.get("/", authMiddleware, getAllConversations);
-
+router.get("/", authMiddleware, getAllConversationsForCurrentUser);
 
 export default router;

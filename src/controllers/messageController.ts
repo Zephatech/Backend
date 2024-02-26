@@ -12,18 +12,19 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
         const senderId = req.user.userId;
 		const { message } = req.body;
         const receiverId = req.params.id;
-
-        console.log(senderId, receiverId, message)
 		
 		let conversation : ConverstaionEntity  = await Conversation.findByUsers([senderId, receiverId]);
-
         const sender: User = await User.findById(senderId);
         const receiver: User = await User.findById(receiverId);
+        if (!sender || !receiver) {
+            return res.status(404).json({ message: "Invalid sender or receiver" });
+        }
+
 		if (!conversation) {
 			conversation = await Conversation.create([sender, receiver]);
 		}
-		const newMessage = await Message.createWithoutSave(senderId, receiverId, message, conversation.id);
-		
+
+		const newMessage = Message.createWithoutSave(senderId, receiverId, message, conversation.id);
         await myDataSource.manager.transaction(
             async transactionalEntityManager => {
                 await transactionalEntityManager.save(newMessage);
@@ -42,7 +43,6 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 export const getMassagesByConversationId = async (req: AuthenticatedRequest, res: Response) => {
-    console.log("getMassagesByConversationId controller")
     try {
         const conversationId = req.params.id;
         const conversation = await Conversation.findById(conversationId);
