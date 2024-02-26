@@ -8,6 +8,8 @@ import productRoutes from './routes/product'
 import tradeRoutes from './routes/trade'
 import myDataSource from './config/dataSource'
 import profileRoutes from './routes/profile'
+import messageRoutes from './routes/message'
+import conversationRoutes from './routes/conversation'
 
 const app = express()
 
@@ -46,6 +48,8 @@ app.use('/auth', authRoutes)
 app.use('/products', productRoutes)
 app.use('/trade', tradeRoutes)
 app.use('/profile', profileRoutes)
+app.use('/message', messageRoutes)
+app.use('/conversation', conversationRoutes)
 
 app.get('/', (req, res) => {
   res.send('Hello There')
