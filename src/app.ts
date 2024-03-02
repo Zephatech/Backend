@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import 'reflect-metadata'
 import { Request, Response, NextFunction } from 'express'
 import express from 'express'
