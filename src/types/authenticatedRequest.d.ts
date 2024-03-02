@@ -1,15 +1,15 @@
-import { Request } from 'express';
+import { Request } from 'express'
 
 interface User {
-  userId: number;
-  email: string;
+  userId: number
+  email: string
 }
 
 interface AuthenticatedRequest extends Request {
-  user: User;
+  user: User
 }
 
 interface PostItemRequest extends AuthenticatedRequest {
-  uuid: any;
-  file: any;
+  uuid: any
+  file: any
 }

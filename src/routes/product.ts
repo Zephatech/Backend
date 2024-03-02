@@ -1,42 +1,59 @@
-import express, { Router, Request, Response } from 'express';
-import { getAllProducts, getProductById, getProductsByUserId, createProduct, updateProduct, deleteProduct, deleteAllProductsByUserId, generateTextForImage } from '../controllers/productController';
-import authMiddleware from '../middleware/authMiddleware';
-import multer from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
-import { imageToText } from '../utils/imageToText';
+import express, { Router, Request, Response } from 'express'
+import {
+  getAllProducts,
+  getProductById,
+  getProductsByUserId,
+  getMyListing,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  deleteAllProductsByUserId,
+  generateTextForImage,
+} from '../controllers/productController'
+import authMiddleware from '../middleware/authMiddleware'
+import multer from 'multer'
+import { v4 as uuidv4 } from 'uuid'
+import path from 'path'
+import { imageToText } from '../utils/imageToText'
 
 // Multer configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '/Users/ryandeng/Documents/Coding/uw-trade/public/images'); // Specify the directory to save the uploaded image
+    cb(null, '/Users/ryandeng/Documents/Coding/uw-trade/public/images') // Specify the directory to save the uploaded image
   },
   filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    const filename = `${uuidv4()}${ext}`;
-    req.uuid = filename; // Attach the UUID to the request object
-    cb(null, filename);
+    const ext = path.extname(file.originalname)
+    const filename = `${uuidv4()}${ext}`
+    req.uuid = filename // Attach the UUID to the request object
+    cb(null, filename)
   },
-});
+})
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage })
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
-router.get('/', getAllProducts);
+router.get('/', getAllProducts)
 
-router.get('/:id', getProductById);
+router.get('/myListings', authMiddleware, getMyListing)
 
-router.get('/user/:userId', getProductsByUserId);
+router.get('/user/:userId', getProductsByUserId)
 
-router.post('/generateTextForImage', authMiddleware, upload.single('image'), generateTextForImage);
+router.get('/:id', getProductById)
 
-router.post('/', authMiddleware, upload.single('image'), createProduct);
+router.post(
+  '/generateTextForImage',
+  authMiddleware,
+  upload.single('image'),
+  generateTextForImage
+)
 
-router.put('/:id', authMiddleware, upload.single('image'), updateProduct);
+router.post('/', authMiddleware, upload.single('image'), createProduct)
 
-router.delete('/:id', authMiddleware, deleteProduct);
+router.put('/:id', authMiddleware, upload.single('image'), updateProduct)
 
-router.delete('/user/:userId', authMiddleware, deleteAllProductsByUserId);
+router.delete('/:id', authMiddleware, deleteProduct)
 
-export default router;
+router.delete('/user/:userId', authMiddleware, deleteAllProductsByUserId)
+
+export default router

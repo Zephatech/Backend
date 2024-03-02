@@ -1,34 +1,37 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 
 @Entity()
 export class Product {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number
 
-    @Column()
-    ownerId: number
-    
-    @Column()
-    name: string
+  @Column()
+  ownerId: number
 
-    @Column()
-    price: number
+  @Column()
+  name: string
 
-    @Column()
-    description: string
+  @Column()
+  price: number
 
-    @Column()
-    category: string
+  @Column()
+  description: string
 
-    @Column()
-    image: string
+  @Column()
+  category: string
 
-    @Column({default: false})
-    isSold: boolean
+  @Column()
+  image: string
 
-    @Column({ default: false })
-    locked: boolean;
-  
-    @Column({ nullable: true })
-    lockedAt: Date;
+  @Column({ default: false })
+  isSold: boolean
+
+  @Column({ default: false })
+  locked: boolean
+
+  @Column({ nullable: true })
+  lockedAt: Date
+
+  @Column({ type: 'json', nullable: true })
+  options: Record<string, any> | null;
 }
