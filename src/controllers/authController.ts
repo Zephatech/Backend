@@ -293,7 +293,7 @@ export const login = async (req: Request, res: Response) => {
     res.cookie('jwt', token, {
       httpOnly: true,
     })
-    res.status(200).json({ message: 'Login successful' })
+    res.status(200).json({ userId, name: user.firstName })
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Internal server error' })
