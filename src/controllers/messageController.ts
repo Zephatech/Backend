@@ -1,41 +1,59 @@
 import { Response } from "express";
+import myDataSource from "../config/dataSource";
 import Conversation from "../models/ConversaionModel";
 import Message from "../models/MessageModel";
 import User from "../models/UserModel";
+import { User as UserEntity } from "../entity/User";
+import { Conversation as ConversationEntity } from "../entity/Conversation";
 import { AuthenticatedRequest } from "../types/authenticatedRequest";
-import { Conversation as ConverstaionEntity } from "../entity/Conversation";
-import myDataSource from "../config/dataSource";
+
+async function _findOrCreateConversation(user1: UserEntity, user2: UserEntity): Promise<ConversationEntity> {
+    const user1Id = user1.id;
+    const user2Id = user2.id;
+
+    const existingConversation = await Conversation.findByUsers(user1Id, user2Id);
+    if (existingConversation) {
+        return existingConversation;
+    } else {
+        return await Conversation.create([user1, user2]);
+    }
+}
 
 export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
-    console.log("sendMessage controller");
 	try {
-        const senderId = req.user.userId;
-		const { message } = req.body;
-        const receiverId = req.params.id;
-		
-		let conversation : ConverstaionEntity  = await Conversation.findByUsers([senderId, receiverId]);
-        const sender: User = await User.findById(senderId);
-        const receiver: User = await User.findById(receiverId);
-        if (!sender || !receiver) {
-            return res.status(404).json({ message: "Invalid sender or receiver" });
+        const message = req.body?.message;
+        if( !message || message.length === 0) {
+            return res.status(400).json({ message: "Invalid message" });
         }
 
-		if (!conversation) {
-			conversation = await Conversation.create([sender, receiver]);
-		}
+        const senderId = req.user.userId;
+        const receiverId = req.params.id;
+        
+        const [sender, receiver] = await Promise.all([
+            User.findById(senderId),
+            User.findById(receiverId)
+        ]);
+
+        if (!sender || !receiver || sender.id === receiver.id) {
+            return res.status(404).json({ message: "Invalid sender or receiver" });
+        }
+        
+        let conversationId = (await _findOrCreateConversation(sender, receiver)).id;
+        let conversation = await Conversation.findById(conversationId);
 
 		const newMessage = Message.createWithoutSave(senderId, receiverId, message, conversation.id);
         await myDataSource.manager.transaction(
             async transactionalEntityManager => {
                 await transactionalEntityManager.save(newMessage);
-                if (newMessage) {
-                    conversation.messages.push(newMessage);
-                }
+                conversation.messages.push(newMessage);
                 await transactionalEntityManager.save(conversation);
             }
         );
-        
-		res.status(201).json(newMessage);
+
+        // TODO：optimize this part
+        const conversationNew = await Conversation.findById(conversationId);
+
+        res.status(200).json(conversationNew.messages);
 	} catch (error) {
 		console.log("Error in sendMessage controller: ", error.message);
 		res.status(500).json({ error: "Internal server error" });
