@@ -5,6 +5,6 @@ import { getUserProfile, updateUserProfile, getOtherUserProfile } from '../contr
 const router: Router = express.Router()
 router.get('/getProfile', authMiddleware, getUserProfile)
 router.put('/updateProfile', authMiddleware, updateUserProfile)
-router.get('/getOtherUserProfile', authMiddleware, getOtherUserProfile)
+router.get('/getOtherUserProfile/:id', authMiddleware, getOtherUserProfile)
 
 export default router

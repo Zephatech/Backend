@@ -1,5 +1,7 @@
-import { Message } from "../entity/Message";
 import myDataSource from "../config/dataSource";
+import { Message } from "../entity/Message";
+import { User } from "../entity/User";
+import { Conversation } from "../entity/Conversation";
 
 class MessageModel {
     private static messageRepository = myDataSource.getRepository(Message);
