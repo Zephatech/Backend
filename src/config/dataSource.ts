@@ -15,8 +15,8 @@ if (process.env.DATABASE_URL) {
     password: connectionOptions.password,
     database: connectionOptions.database,
     entities: ['src/entity/*.ts'],
-    extra: {
-      ssl: true,
+    ssl: {
+      rejectUnauthorized: false,
     },
     logging: true,
     synchronize: true,
