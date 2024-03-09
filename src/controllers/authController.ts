@@ -51,7 +51,10 @@ async function sendVerificationCodeToEmail(email, verificationCode) {
   }
 }
 
-async function sendVerificationCodeToEmailForResetPassword(email, verificationCode) {
+async function sendVerificationCodeToEmailForResetPassword(
+  email,
+  verificationCode
+) {
   const mailOptions = {
     from: 'no-reply@uwtrade.com', // Add your sender email address here
     to: email,
@@ -290,9 +293,10 @@ export const login = async (req: Request, res: Response) => {
     const secretKey = 'uwaterlootradesecret'
     const userId = user.id
     const token = jwt.sign({ email, userId }, secretKey, { expiresIn })
-    res.cookie('jwt', token, {
-      httpOnly: true,
-    })
+    res.setHeader(
+      'Set-Cookie',
+      `jwt=${token}; HttpOnly; Secure; SameSite=None; Path=/; Partitioned;`
+    )
     res.status(200).json({ userId, name: user.firstName })
   } catch (error) {
     console.log(error)
@@ -307,7 +311,10 @@ export const logout = (req: Request, res: Response) => {
   res.status(200).json({ message: 'Logout successful' })
 }
 
-export const getCurrentUserIdAndName = async (req: AuthenticatedRequest, res: Response) => {
+export const getCurrentUserIdAndName = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   try {
     const user = await User.findById(req.user.userId)
     res.status(200).json({ userId: req.user.userId, name: user?.firstName })
