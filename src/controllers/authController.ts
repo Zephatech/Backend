@@ -174,7 +174,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
       `jwt=${token}; HttpOnly; Secure; SameSite=None; Path=/; Partitioned;`
     )
 
-    res.status(200).json({ message: 'Email verification successful' })
+    res.status(200).json({ userId, name: user.firstName })
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Internal server error' })
