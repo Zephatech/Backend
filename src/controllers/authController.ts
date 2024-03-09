@@ -123,9 +123,6 @@ export const register = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    // Generate email verification token
-    const token = jwt.sign({ email }, 'uwaterlootradesecret')
-
     // Store user in the database
     await User.create(
       firstName,
@@ -139,9 +136,6 @@ export const register = async (req: Request, res: Response) => {
 
     await sendVerificationCodeToEmail(email, verificationCode) // Implement this function to send verification code to user's email
 
-    res.cookie('jwt', token, {
-      httpOnly: true,
-    })
     res.status(200).json({
       message:
         'Registration successful. Please check your email for verification.',
@@ -172,12 +166,13 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     // Generate JWT with expiration time
     const expiresIn = '7d' // Token expires in a week
-    const secretKey = 'uwaterlootradesecret'
+    const secretKey = process.env.SECRET_KEY
     const userId = user.id
     const token = jwt.sign({ email, userId }, secretKey, { expiresIn })
-    res.cookie('jwt', token, {
-      httpOnly: true,
-    })
+    res.setHeader(
+      'Set-Cookie',
+      `jwt=${token}; HttpOnly; Secure; SameSite=None; Path=/; Partitioned;`
+    )
 
     res.status(200).json({ message: 'Email verification successful' })
   } catch (error) {
@@ -290,7 +285,7 @@ export const login = async (req: Request, res: Response) => {
 
     // Generate JWT with expiration time
     const expiresIn = '7d' // Token expires in a week
-    const secretKey = 'uwaterlootradesecret'
+    const secretKey = process.env.SECRET_KEY
     const userId = user.id
     const token = jwt.sign({ email, userId }, secretKey, { expiresIn })
     res.setHeader(
@@ -305,9 +300,10 @@ export const login = async (req: Request, res: Response) => {
 }
 
 export const logout = (req: Request, res: Response) => {
-  res.cookie('jwt', '', {
-    httpOnly: true,
-  })
+  res.setHeader(
+    'Set-Cookie',
+    `jwt=; HttpOnly; Secure; SameSite=None; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Partitioned;`
+  )
   res.status(200).json({ message: 'Logout successful' })
 }
 
