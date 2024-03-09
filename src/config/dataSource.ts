@@ -3,7 +3,7 @@ import * as PostgressConnectionStringParser from 'pg-connection-string'
 
 let config: DataSourceOptions
 
-if (process.env.DATABASE_URL) {
+if (process.env.DATABASE_URL != null) {
   const connectionOptions = PostgressConnectionStringParser.parse(
     process.env.DATABASE_URL
   )
@@ -18,7 +18,7 @@ if (process.env.DATABASE_URL) {
     ssl: {
       rejectUnauthorized: false,
     },
-    logging: true,
+    logging: false,
     synchronize: true,
   }
 } else {
