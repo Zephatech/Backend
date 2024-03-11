@@ -38,7 +38,7 @@ router.get('/', getAllProducts)
 
 router.get('/myListings', authMiddleware, getMyListing)
 
-router.get("/getSimilarProducts/:id",git getSimilarProducts)
+router.get("/getSimilarProducts/:id", getSimilarProducts)
 
 router.get('/user/:userId', getProductsByUserId)
 
