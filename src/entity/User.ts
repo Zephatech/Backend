@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 import myDataSource from '../config/dataSource'
 
 @Entity()
-export class User {
+export class Usfuter {
   private static userRepository = myDataSource.getRepository(User)
 
   static async findById(id) {
@@ -34,6 +34,9 @@ export class User {
 
   @Column({ nullable: true })
   facebookProfile: string
+
+  @Column ({ nullable: true })
+  bio: string
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date

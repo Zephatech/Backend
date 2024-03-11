@@ -61,7 +61,8 @@ class UserModel {
     firstName,
     lastName,
     phoneNumber,
-    facebookProfile
+    facebookProfile,
+    bio
   ) {
     const user = await this.userRepository.findOneBy({ id: userId })
 
@@ -70,6 +71,7 @@ class UserModel {
       lastName: lastName || user.lastName,
       phoneNumber: phoneNumber || user.phoneNumber,
       facebookProfile: facebookProfile || user.facebookProfile,
+      bio: bio || user.bio,
     }
 
     await this.userRepository.save({ ...user, ...updatedFields })

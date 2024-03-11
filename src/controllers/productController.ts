@@ -59,6 +59,23 @@ export const getProductById = async (req: Request, res: Response) => {
   }
 }
 
+export const getSimilarProducts = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.id
+    const product = await Product.findById(productId)
+    if (!product) {
+      res.status(404).json({ message: 'Product not found' })
+    }
+   
+    const products = await Product.findAllByCategory(product.category);
+    const filteredProducts = products.filter(p => p.id !== product.id);
+    
+    res.status(200).json(filteredProducts)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 export const getProductsByUserId = async (req: Request, res: Response) => {
   try {
     const products = await Product.findByUserId(req.params.userId)
