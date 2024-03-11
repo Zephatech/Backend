@@ -27,6 +27,10 @@ class ProductModel {
     return await this.productRepository.findBy({ ownerId: userId })
   }
 
+  static async findAllByCategory(category) {
+    return await this.productRepository.findBy({ category: category })
+  }
+
   static async create(ownerId, name, price, description, category, image, options) {
     const product = new Product()
     product.ownerId = ownerId

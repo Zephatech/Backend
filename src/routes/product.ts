@@ -9,6 +9,7 @@ import {
   deleteProduct,
   deleteAllProductsByUserId,
   generateTextForImage,
+  getSimilarProducts,
 } from '../controllers/productController'
 import authMiddleware from '../middleware/authMiddleware'
 import multer from 'multer'
@@ -36,6 +37,8 @@ const router: Router = express.Router()
 router.get('/', getAllProducts)
 
 router.get('/myListings', authMiddleware, getMyListing)
+
+router.get("/getSimilarProducts/:id",git getSimilarProducts)
 
 router.get('/user/:userId', getProductsByUserId)
 
