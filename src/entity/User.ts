@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 import myDataSource from '../config/dataSource'
 
 @Entity()
-export class Usfuter {
+export class User {
   private static userRepository = myDataSource.getRepository(User)
 
   static async findById(id) {
