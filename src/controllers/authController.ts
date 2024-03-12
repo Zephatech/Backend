@@ -51,7 +51,10 @@ async function sendVerificationCodeToEmail(email, verificationCode) {
   }
 }
 
-async function sendVerificationCodeToEmailForResetPassword(email, verificationCode) {
+async function sendVerificationCodeToEmailForResetPassword(
+  email,
+  verificationCode
+) {
   const mailOptions = {
     from: 'no-reply@uwtrade.com', // Add your sender email address here
     to: email,
@@ -120,9 +123,6 @@ export const register = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    // Generate email verification token
-    const token = jwt.sign({ email }, 'uwaterlootradesecret')
-
     // Store user in the database
     await User.create(
       firstName,
@@ -136,9 +136,6 @@ export const register = async (req: Request, res: Response) => {
 
     await sendVerificationCodeToEmail(email, verificationCode) // Implement this function to send verification code to user's email
 
-    res.cookie('jwt', token, {
-      httpOnly: true,
-    })
     res.status(200).json({
       message:
         'Registration successful. Please check your email for verification.',
@@ -169,14 +166,15 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     // Generate JWT with expiration time
     const expiresIn = '7d' // Token expires in a week
-    const secretKey = 'uwaterlootradesecret'
+    const secretKey = process.env.SECRET_KEY
     const userId = user.id
     const token = jwt.sign({ email, userId }, secretKey, { expiresIn })
-    res.cookie('jwt', token, {
-      httpOnly: true,
-    })
+    res.setHeader(
+      'Set-Cookie',
+      `jwt=${token}; HttpOnly; Secure; SameSite=None; Path=/; Partitioned;`
+    )
 
-    res.status(200).json({ message: 'Email verification successful' })
+    res.status(200).json({ userId, name: user.firstName })
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Internal server error' })
@@ -287,12 +285,13 @@ export const login = async (req: Request, res: Response) => {
 
     // Generate JWT with expiration time
     const expiresIn = '7d' // Token expires in a week
-    const secretKey = 'uwaterlootradesecret'
+    const secretKey = process.env.SECRET_KEY
     const userId = user.id
     const token = jwt.sign({ email, userId }, secretKey, { expiresIn })
-    res.cookie('jwt', token, {
-      httpOnly: true,
-    })
+    res.setHeader(
+      'Set-Cookie',
+      `jwt=${token}; HttpOnly; Secure; SameSite=None; Path=/; Partitioned;`
+    )
     res.status(200).json({ userId, name: user.firstName })
   } catch (error) {
     console.log(error)
@@ -301,13 +300,17 @@ export const login = async (req: Request, res: Response) => {
 }
 
 export const logout = (req: Request, res: Response) => {
-  res.cookie('jwt', '', {
-    httpOnly: true,
-  })
+  res.setHeader(
+    'Set-Cookie',
+    `jwt=; HttpOnly; Secure; SameSite=None; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Partitioned;`
+  )
   res.status(200).json({ message: 'Logout successful' })
 }
 
-export const getCurrentUserIdAndName = async (req: AuthenticatedRequest, res: Response) => {
+export const getCurrentUserIdAndName = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   try {
     const user = await User.findById(req.user.userId)
     res.status(200).json({ userId: req.user.userId, name: user?.firstName })

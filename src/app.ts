@@ -32,7 +32,10 @@ app.use(
   cors({
     exposedHeaders: 'set-cookie',
     credentials: true,
-    origin: 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000',
+      'https://zephatech-frontend-fb929194be73.herokuapp.com',
+    ],
   })
 )
 
