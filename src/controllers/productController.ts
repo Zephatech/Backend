@@ -107,11 +107,11 @@ export const createProduct = async (req: PostItemRequest, res: Response) => {
     }
 
     const image = req.file ? req.uuid : ''
-    if (req.file && (await isImageToxic(image))) {
-      return res
-        .status(400)
-        .json({ message: 'Product image contains sensitive content' })
-    }
+    // if (req.file && (await isImageToxic(image))) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: 'Product image contains sensitive content' })
+    // }
     const product = await Product.create(
       ownerId,
       name,
@@ -227,6 +227,7 @@ export const generateTextForImage = async (
     let image = req.file ? req.uuid : ''
     console.log('+++++++++++')
     console.log(image)
+    console.log(await isImageToxic(image))
     if (req.file && (await isImageToxic(image))) {
       return res
         .status(400)

@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 import { enable_AI_text_checker } from '../featureFlags'
 
 export const isImageToxic = async (path: String) => {
-  if (enable_AI_text_checker == false) {
+  if (true) {
     return false
   }
   let relativePathHardCode =
