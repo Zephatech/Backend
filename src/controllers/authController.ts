@@ -40,14 +40,18 @@ async function sendVerificationCodeToEmail(email, verificationCode) {
   }
 
   if (enable_mail_sender) {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error)
-        throw error
-      } else {
-        console.log('Email sent: ' + info.response)
-      }
-    })
+    try{
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error)
+          throw error
+        } else {
+          console.log('Email sent: ' + info.response)
+        }
+      })
+    }catch{
+      console.log("Error sending email")
+    }
   }
 }
 
@@ -74,14 +78,18 @@ async function sendVerificationCodeToEmailForResetPassword(
   }
 
   if (enable_mail_sender) {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error)
-        throw error
-      } else {
-        console.log('Email sent: ' + info.response)
-      }
-    })
+    try{
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error)
+          throw error
+        } else {
+          console.log('Email sent: ' + info.response)
+        }
+      })
+    }catch{
+      console.log("Error sending email")
+    }
   }
 }
 
