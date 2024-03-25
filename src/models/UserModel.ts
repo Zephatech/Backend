@@ -53,6 +53,7 @@ class UserModel {
   static async updatePassword(email, password) {
     const user = await this.userRepository.findOneBy({ email: email })
     user.password = password
+    user.verified = true
     await this.userRepository.save(user)
   }
 

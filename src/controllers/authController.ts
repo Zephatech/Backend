@@ -33,7 +33,7 @@ async function sendVerificationCodeToEmail(email, verificationCode) {
         <div style="text-align: center; background-color: #007BFF; color: white; padding: 10px; font-size: 24px; margin: 10px auto; width: 150px;">
           ${verificationCode}
         </div>
-        <p style="text-align: center;">Please enter this code <a href="http://localhost:3000/verify-email?email=${email}">here</a> to complete the verification process.</p>
+        <p style="text-align: center;">Please enter this code <a href="${process.env.WEB_URL}/verify-email?email=${email}">here</a> to complete the verification process.</p>
         <p style="text-align: center;">Thank you for using our service!</p>
       </div>
     `,
@@ -71,7 +71,7 @@ async function sendVerificationCodeToEmailForResetPassword(
         <div style="text-align: center; background-color: #007BFF; color: white; padding: 10px; font-size: 24px; margin: 10px auto; width: 150px;">
           ${verificationCode}
         </div>
-        <p style="text-align: center;">Please enter this code <a href="http://localhost:3000/password-reset">here</a> to complete the verification process.</p>
+        <p style="text-align: center;">Please enter this code <a href="${process.env.WEB_URL}/password-reset">here</a> to complete the verification process.</p>
         <p style="text-align: center;">Thank you for using our service!</p>
       </div>
     `,
