@@ -19,7 +19,7 @@ const authMiddleware = (
   try {
     const decoded: { email: string; userId: number } = jwt.verify(
       token,
-      'uwaterlootradesecret'
+      process.env.SECRET_KEY
     )
     req.user = decoded
     next()
