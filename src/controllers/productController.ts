@@ -97,7 +97,7 @@ export const getMyListing = async (req: AuthenticatedRequest, res: Response) => 
 export const createProduct = async (req: PostItemRequest, res: Response) => {
   try {
     const ownerId = req.user.userId
-    const { name, price, description, category } = req.body
+    const { name, price, description, category, image } = req.body
     const options = req.body.options ? JSON.parse(req.body.options) : null;
 
     if ((await isContentToxic(name)) || (await isContentToxic(description))) {
@@ -106,12 +106,13 @@ export const createProduct = async (req: PostItemRequest, res: Response) => {
       })
     }
 
-    const image = req.file ? req.uuid : ''
+    // const image = req.file ? req.uuid : ''
     // if (req.file && (await isImageToxic(image))) {
     //   return res
     //     .status(400)
     //     .json({ message: 'Product image contains sensitive content' })
     // }
+
     const product = await Product.create(
       ownerId,
       name,
@@ -131,7 +132,7 @@ export const updateProduct = async (req: PostItemRequest, res: Response) => {
   try {
     const productId = req.params.id
     const ownerId = req.user.userId
-    const { name, price, description, category } = req.body
+    const { name, price, description, category, image } = req.body
 
     if ((await isContentToxic(name)) || (await isContentToxic(description))) {
       return res.status(400).json({
@@ -156,7 +157,7 @@ export const updateProduct = async (req: PostItemRequest, res: Response) => {
           'Product is locked, there is a comfirmed trade for this product, please cancel if you want to change the product',
       })
     }
-    const image = req.file ? req.uuid : ''
+    // const image = req.file ? req.uuid : ''
     const updatedProduct = await Product.update(
       productId,
       name,
