@@ -11,11 +11,9 @@ const authMiddleware = (
   next: NextFunction
 ) => {
   const token: string | undefined = req.cookies.jwt
-  console.log(req.cookies)
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
-
   try {
     const decoded: { email: string; userId: number } = jwt.verify(
       token,
